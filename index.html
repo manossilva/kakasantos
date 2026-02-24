@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kaka Santos | O Trabalho Continua</title>
+    
+    <!-- Bibliotecas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        kaka: {
+                            blue: '#0044CC', // Azul Royal Vibrante
+                            dark: '#002266', // Azul Marinho
+                            yellow: '#FFD700', // Amarelo Ouro
+                            light: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos Personalizados */
+        body { font-family: 'Open Sans', sans-serif; }
+        h1, h2, h3, h4, h5, .font-display { font-family: 'Montserrat', sans-serif; }
+        
+        /* Padrão de fundo geométrico */
+        .bg-pattern {
+            background-image: radial-gradient(#0044CC 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+
+        /* Card Hover Effect - Levantar levemente */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 68, 204, 0.15), 0 10px 10px -5px rgba(0, 68, 204, 0.1);
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0044CC; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #002266; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Fundo Padrão -->
+    <div class="fixed inset-0 bg-pattern pointer-events-none z-0"></div>
+
+    <!-- ==========================================
+         NAVBAR (Minimalista e Sólida)
+         ========================================== -->
+    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-1 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    <div class="w-10 h-10 bg-kaka-blue text-kaka-yellow flex items-center justify-center font-display font-black text-xl rounded-lg transform -skew-x-6">
+                        K
+                    </div>
+                    <div class="flex flex-col leading-none ml-2">
+                        <span class="font-display font-black text-xl text-kaka-blue tracking-tighter uppercase">Kaka Santos</span>
+                        <span class="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase">Deputado Federal</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#inicio" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Início</a>
+                    <a href="#atuacao" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Atuação</a>
+                    <a href="#verdade" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Verdade</a>
+                    <a href="#bio" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Trajetória</a>
+                    
+                    <a href="#contato" class="bg-kaka-yellow text-kaka-dark px-6 py-2.5 rounded-lg font-black uppercase text-xs tracking-widest hover:bg-yellow-300 transition-colors shadow-lg shadow-yellow-400/30 transform hover:scale-105 duration-200">
+                        Fale Comigo
+                    </a>
+                </div>
+
+                <!-- Mobile Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="text-kaka-blue p-2">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 z-[60] bg-kaka-blue transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center gap-8">
+        <button id="closeMenuBtn" class="absolute top-6 right-6 text-white p-2">
+            <i data-lucide="x" class="w-10 h-10"></i>
+        </button>
+        <a href="#inicio" class="mobile-link text-3xl font-display font-black text-white hover:text-kaka-yellow">INÍCIO</a>
+        <a href="#atuacao" class="mobile-link text-3xl font-display font-black text-white hover:text-kaka-yellow">ATUAÇÃO</a>
+        <a href="#verdade" class="mobile-link text-3xl font-display font-black text-white hover:text-kaka-yellow">A VERDADE</a>
+        <a href="#contato" class="mobile-link text-3xl font-display font-black text-kaka-yellow border-2 border-kaka-yellow px-8 py-2 rounded-xl">CONTATO</a>
+    </div>
+
+    <!-- ==========================================
+         HERO SECTION (Estilo Bento Grid - Mosaico)
+         ========================================== -->
+    <section id="inicio" class="pt-28 pb-12 px-4 sm:px-6 relative z-10 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row items-end justify-between mb-8 gap-4">
+            <div>
+                <span class="text-kaka-blue font-bold text-xs uppercase tracking-[0.2em] bg-blue-100 px-2 py-1 rounded mb-2 inline-block">Portal da Transparência</span>
+                <h1 class="text-4xl sm:text-6xl font-display font-black text-slate-900 leading-none">
+                    O BRASIL QUE <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-kaka-blue to-blue-400">SERGIPE PRECISA.</span>
+                </h1>
+            </div>
+            <div class="hidden md:flex gap-2">
+                <button onclick="scrollNews(-1)" class="p-3 border border-slate-200 rounded-full hover:bg-kaka-blue hover:text-white transition-colors"><i data-lucide="arrow-left"></i></button>
+                <button onclick="scrollNews(1)" class="p-3 border border-slate-200 rounded-full hover:bg-kaka-blue hover:text-white transition-colors"><i data-lucide="arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Mosaico Principal (Grid Dinâmico) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-[600px]" id="heroGrid">
+            <!-- Preenchido via JS -->
+        </div>
+    </section>
+
+    <!-- ==========================================
+         FAIXA DE NÚMEROS (Ticker)
+         ========================================== -->
+    <section class="bg-kaka-blue text-white py-12 -mx-4 sm:mx-0 sm:rounded-3xl relative overflow-hidden shadow-2xl shadow-blue-900/20 max-w-[98%] mx-auto">
+        <div class="absolute top-0 right-0 p-12 opacity-10">
+            <i data-lucide="activity" class="w-64 h-64"></i>
+        </div>
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
+            <div class="space-y-2">
+                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="15">0</h3>
+                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">Milhões em Emendas</p>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="24">0</h3>
+                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">Municípios Atendidos</p>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="120">0</h3>
+                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">Projetos de Lei</p>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="100">0</h3>
+                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">% Presença Plenário</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         FILTRO DE ATUAÇÃO (Abas Modernas)
+         ========================================== -->
+    <section id="atuacao" class="py-20 max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 border-b border-slate-200 pb-4">
+            <h2 class="text-3xl font-display font-black text-slate-900 uppercase tracking-tight">Notícias do <span class="text-kaka-blue">Mandato</span></h2>
+            
+            <!-- Filtros -->
+            <div class="flex gap-6 overflow-x-auto no-scrollbar mt-4 md:mt-0" id="cityFilters">
+                <!-- Botões inseridos via JS -->
+            </div>
+        </div>
+
+        <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Cards inseridos via JS -->
+        </div>
+
+        <div class="mt-12 text-center">
+            <button class="inline-flex items-center gap-2 text-kaka-blue font-black uppercase tracking-widest text-xs border-b-2 border-kaka-yellow pb-1 hover:text-kaka-dark hover:border-kaka-blue transition-all">
+                Ver todo o arquivo <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         SEÇÃO VERDADE (Estilo "Fact Check")
+         ========================================== -->
+    <section id="verdade" class="py-20 bg-slate-900 text-white relative overflow-hidden">
+        <!-- Background decorative -->
+        <div class="absolute -right-20 top-20 w-96 h-96 bg-kaka-blue rounded-full blur-[120px] opacity-20"></div>
+        <div class="absolute -left-20 bottom-20 w-96 h-96 bg-kaka-yellow rounded-full blur-[120px] opacity-10"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+            <div class="text-center mb-16">
+                <span class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">Combate à Desinformação</span>
+                <h2 class="text-4xl md:text-5xl font-display font-black mt-4 uppercase">Gabinete da <span class="text-kaka-yellow">Verdade</span></h2>
+                <p class="text-slate-400 mt-4 max-w-2xl mx-auto">Contra fatos não há argumentos. Confira as checagens oficiais.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="fakeNewsContainer">
+                <!-- Cards inseridos via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         CONTATO (Newsletter Style)
+         ========================================== -->
+    <section id="contato" class="py-20 px-4 sm:px-6">
+        <div class="max-w-5xl mx-auto bg-kaka-yellow rounded-[2rem] p-8 md:p-16 relative overflow-hidden shadow-2xl">
+            <div class="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-center gap-12">
+                <div class="flex-1 text-center md:text-left">
+                    <h2 class="text-4xl font-display font-black text-kaka-dark mb-4 uppercase leading-none">Vem com a gente!</h2>
+                    <p class="text-kaka-dark/80 font-medium mb-8">Receba as novidades do mandato direto no seu WhatsApp. Sem spam, apenas trabalho.</p>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center gap-3 text-kaka-dark font-bold">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-kaka-blue"><i data-lucide="phone"></i></div>
+                            <span>(79) 99999-9999</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-kaka-dark font-bold">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-kaka-blue"><i data-lucide="mail"></i></div>
+                            <span>gabinete@kakasantos.com.br</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-1">Nome</label>
+                            <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-kaka-blue focus:ring-1 focus:ring-kaka-blue transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-1">WhatsApp</label>
+                            <input type="tel" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-kaka-blue focus:ring-1 focus:ring-kaka-blue transition-all">
+                        </div>
+                        <button class="w-full bg-kaka-blue text-white py-4 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20 active:translate-y-1">
+                            Cadastrar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white border-t border-slate-200 py-12 text-center">
+        <div class="flex justify-center items-center gap-2 mb-4 opacity-50">
+             <div class="w-6 h-6 bg-kaka-blue text-white flex items-center justify-center font-display font-black text-xs rounded transform -skew-x-6">K</div>
+             <span class="font-display font-black text-slate-900 uppercase">Kaka Santos</span>
+        </div>
+        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Política com Propósito • Sergipe 2026</p>
+    </footer>
+
+    <!-- ==========================================
+         JAVASCRIPT
+         ========================================== -->
+    <script>
+        // DADOS (EDITÁVEIS)
+        const principalNews = [
+            {
+                id: 1,
+                title: "RECURSOS GARANTIDOS PARA NOVA ORLA",
+                category: "Infraestrutura",
+                img: "https://images.unsplash.com/photo-1498889444388-e67ea62c464b?q=80&w=2000&auto=format&fit=crop",
+                size: "big" // Ocupa espaço maior
+            },
+            {
+                id: 2,
+                title: "Saúde Digital em Expansão",
+                category: "Inovação",
+                img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop",
+                size: "small"
+            },
+            {
+                id: 3,
+                title: "Educação em Tempo Integral",
+                category: "Educação",
+                img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2000&auto=format&fit=crop",
+                size: "small"
+            }
+        ];
+
+        const allNews = [
+            { title: "Kaka Santos recebe prefeitos", city: "Aracaju", date: "02 Fev", img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1000&auto=format&fit=crop" },
+            { title: "Visita técnica às obras da BR", city: "Interior", date: "30 Jan", img: "https://images.unsplash.com/photo-1590486803833-ffc6f98629e7?q=80&w=1000&auto=format&fit=crop" },
+            { title: "Entrega de Tratores", city: "Lagarto", date: "28 Jan", img: "https://images.unsplash.com/photo-1532059345579-2475e206085e?q=80&w=1000&auto=format&fit=crop" },
+            { title: "Emendas para o Hospital Regional", city: "Estância", date: "25 Jan", img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1000&auto=format&fit=crop" }
+        ];
+
+        const fakeNewsData = [
+            {
+                fake: "Kaka Santos votou pelo aumento de impostos.",
+                truth: "O voto foi CONTRA qualquer aumento da carga tributária. Kaka defendeu a redução de impostos para a cesta básica.",
+                status: "FALSO"
+            },
+            {
+                fake: "O deputado faltou à votação importante.",
+                truth: "Kaka estava presente e presidiu a sessão da comissão no mesmo horário. Os registros oficiais da câmara comprovam.",
+                status: "FALSO"
+            }
+        ];
+
+        const cities = ["Geral", "Aracaju", "Lagarto", "Estância", "Interior"];
+        let currentCity = "Geral";
+
+        // LÓGICA DE RENDERIZAÇÃO
+
+        function renderHero() {
+            const container = document.getElementById('heroGrid');
+            let html = '';
+            
+            // O primeiro item é o destaque grande (2 colunas, 2 linhas)
+            const main = principalNews[0];
+            html += `
+                <div class="col-span-1 md:col-span-2 md:row-span-2 relative rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
+                    <img src="${main.img}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${main.title}">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6 md:p-8">
+                        <span class="bg-kaka-yellow text-kaka-dark text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded mb-3 inline-block">${main.category}</span>
+                        <h2 class="text-2xl md:text-4xl text-white font-display font-black leading-tight group-hover:text-kaka-yellow transition-colors">${main.title}</h2>
+                    </div>
+                </div>
+            `;
+
+            // Os outros itens menores
+            principalNews.slice(1).forEach(item => {
+                html += `
+                    <div class="col-span-1 md:col-span-1 md:row-span-1 relative rounded-2xl overflow-hidden group cursor-pointer shadow-md min-h-[250px] md:min-h-0">
+                        <img src="${item.img}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.title}">
+                        <div class="absolute inset-0 bg-gradient-to-t from-kaka-blue/90 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="absolute bottom-0 left-0 p-6">
+                            <span class="text-white/70 text-[10px] font-bold uppercase tracking-widest block mb-1">${item.category}</span>
+                            <h3 class="text-lg text-white font-display font-bold leading-tight group-hover:underline decoration-kaka-yellow decoration-2 underline-offset-4">${item.title}</h3>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Box de chamada para ação (Fixo)
+            html += `
+                <div class="col-span-1 md:col-span-1 md:row-span-1 bg-kaka-blue rounded-2xl p-6 flex flex-col justify-center items-start text-white relative overflow-hidden group cursor-pointer hover:bg-blue-800 transition-colors">
+                    <i data-lucide="arrow-up-right" class="absolute top-6 right-6 w-8 h-8 text-kaka-yellow opacity-50 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+                    <h3 class="text-2xl font-display font-black uppercase mb-2">Agenda<br>Oficial</h3>
+                    <p class="text-sm text-blue-100 mb-4">Confira onde Kaka estará nesta semana.</p>
+                    <span class="text-xs font-bold uppercase tracking-widest text-kaka-yellow border-b border-kaka-yellow pb-1">Ver calendário</span>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function renderFilters() {
+            const container = document.getElementById('cityFilters');
+            container.innerHTML = cities.map(city => `
+                <button onclick="setCity('${city}')" 
+                    class="whitespace-nowrap pb-2 text-xs font-black uppercase tracking-widest transition-all ${currentCity === city ? 'text-kaka-blue border-b-4 border-kaka-blue' : 'text-slate-400 hover:text-slate-600 border-b-4 border-transparent'}">
+                    ${city}
+                </button>
+            `).join('');
+        }
+
+        function setCity(city) {
+            currentCity = city;
+            renderFilters();
+            renderNewsGrid();
+        }
+
+        function renderNewsGrid() {
+            const container = document.getElementById('newsGrid');
+            const filtered = currentCity === "Geral" ? allNews : allNews.filter(n => n.city === currentCity || n.city === "Geral");
+            
+            container.innerHTML = filtered.map(news => `
+                <div class="bg-white rounded-xl overflow-hidden hover-lift border border-slate-100 group">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="${news.img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-black text-kaka-blue uppercase tracking-wider shadow-sm">
+                            ${news.city}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest block mb-2">${news.date}</span>
+                        <h4 class="text-lg font-display font-bold text-slate-900 leading-tight mb-4 group-hover:text-kaka-blue transition-colors">${news.title}</h4>
+                        <a href="#" class="inline-flex items-center text-kaka-blue text-xs font-black uppercase tracking-widest hover:underline">Ler matéria <i data-lucide="chevron-right" class="w-3 h-3 ml-1"></i></a>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderFakeNews() {
+            const container = document.getElementById('fakeNewsContainer');
+            container.innerHTML = fakeNewsData.map(item => `
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-colors">
+                    <div class="flex items-start gap-4 mb-6 opacity-60">
+                        <div class="w-10 h-10 min-w-[2.5rem] rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-red-400 text-[10px] font-black uppercase tracking-widest block mb-1">Boato circulando</span>
+                            <p class="text-white italic text-lg">"${item.fake}"</p>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full h-px bg-white/10 mb-6"></div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 min-w-[2.5rem] rounded-full bg-kaka-yellow/20 flex items-center justify-center text-kaka-yellow">
+                            <i data-lucide="check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-kaka-yellow text-[10px] font-black uppercase tracking-widest block mb-1">A verdade dos fatos</span>
+                            <p class="text-white font-bold text-xl leading-snug">${item.truth}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Animação dos Números
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const increment = target / 50;
+                let current = 0;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.innerText = target + (counter.innerText.includes('%') ? '%' : '');
+                        clearInterval(timer);
+                    } else {
+                        counter.innerText = Math.ceil(current);
+                    }
+                }, 40);
+            });
+        }
+
+        // Menu Mobile
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const closeBtn = document.getElementById('closeMenuBtn');
+        const menu = document.getElementById('mobileMenu');
+        const links = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            const isOpen = !menu.classList.contains('translate-x-full');
+            if(isOpen) {
+                menu.classList.add('translate-x-full');
+            } else {
+                menu.classList.remove('translate-x-full');
+            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+        links.forEach(l => l.addEventListener('click', toggleMenu));
+
+        // Inicialização
+        window.addEventListener('load', () => {
+            renderHero();
+            renderFilters();
+            renderNewsGrid();
+            renderFakeNews();
+            lucide.createIcons();
+            setTimeout(animateCounters, 500); // Inicia animação após carregar
+        });
+
+    </script>
+</body>
+</html>
