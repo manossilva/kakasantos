@@ -150,11 +150,14 @@
             <button onclick="switchTab('propostas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="propostas">
                 <i class="ph ph-file-text text-xl"></i> Propostas Legis.
             </button>
-            <button onclick="switchTab('agenda')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="agenda">
-                <i class="ph ph-calendar-blank text-xl"></i> Agenda
+            <button onclick="switchTab('saude')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="saude">
+                <i class="ph ph-heartbeat text-xl text-red-500"></i> Saúde
             </button>
             <button onclick="switchTab('liderancas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="liderancas">
                 <i class="ph ph-users-three text-xl"></i> Lideranças
+            </button>
+            <button onclick="switchTab('agenda')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="agenda">
+                <i class="ph ph-calendar-blank text-xl"></i> Agenda
             </button>
             <button onclick="switchTab('kanban')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="kanban">
                 <i class="ph ph-kanban text-xl"></i> Demandas
@@ -210,6 +213,12 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white rounded-3xl p-5 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('saude')">
+                        <div class="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-red-500 mb-3"><i class="ph-fill ph-heartbeat text-2xl"></i></div>
+                        <h4 class="font-bold text-gray-800">Casos Saúde</h4>
+                        <p class="text-xs text-gray-500 mt-1"><span id="dash-saude-pendentes" class="font-bold text-red-500">0</span> alertas hoje</p>
+                    </div>
+
                     <div class="bg-white rounded-3xl p-5 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('kanban')">
                         <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-ios-purple mb-3"><i class="ph-fill ph-kanban text-2xl"></i></div>
                         <h4 class="font-bold text-gray-800">Demandas</h4>
@@ -222,9 +231,9 @@
                         <p class="text-xs text-gray-500 mt-1"><span id="dash-agenda-hoje" class="font-bold">0</span> compromissos hoje</p>
                     </div>
 
-                    <div class="col-span-2 bg-yellow-50 rounded-3xl p-5 shadow-apple cursor-pointer hover:scale-[1.02] transition-transform border border-yellow-100 flex flex-col justify-center" onclick="switchTab('notas')">
-                        <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2"><i class="ph-fill ph-notebook"></i> Última Anotação</h4>
-                        <div id="dash-notas-preview" class="text-sm text-yellow-900 line-clamp-2 italic">Nenhuma nota recente.</div>
+                    <div class="bg-yellow-50 rounded-3xl p-5 shadow-apple cursor-pointer hover:scale-[1.02] transition-transform border border-yellow-100 flex flex-col justify-center" onclick="switchTab('notas')">
+                        <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2"><i class="ph-fill ph-notebook"></i> Última Nota</h4>
+                        <div id="dash-notas-preview" class="text-sm text-yellow-900 line-clamp-2 italic">Nenhuma nota.</div>
                     </div>
                 </div>
             </div>
@@ -335,6 +344,30 @@
             </div>
         </section>
 
+        <!-- ================= SAÚDE (NOVO MÓDULO) ================= -->
+        <section id="view-saude" class="page h-full flex-col" style="display: none;">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                <h2 class="text-2xl font-bold">Gestão de Casos de Saúde</h2>
+                <div class="flex gap-2">
+                    <button onclick="adicionarColunaSaude()" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold ios-btn shadow-sm hover:bg-gray-50">+ Nova Fase</button>
+                    <button onclick="abrirModalSaude()" class="bg-red-500 text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-red-500/30">+ Novo Atendimento</button>
+                </div>
+            </div>
+
+            <!-- Painel de Alertas de Follow-up (Oculto se não houver) -->
+            <div id="saude-alertas-panel" class="mb-4 bg-red-50 border border-red-200 p-4 rounded-2xl hidden shadow-sm relative overflow-hidden">
+                <div class="absolute right-[-20px] top-[-20px] opacity-10 text-red-500"><i class="ph-fill ph-bell-ringing text-9xl"></i></div>
+                <h3 class="font-bold text-red-800 mb-2 flex items-center gap-2 relative z-10"><i class="ph-bold ph-warning-circle text-lg"></i> Pacientes precisando de retorno hoje ou atrasados</h3>
+                <div id="saude-alertas-list" class="flex flex-col gap-2 relative z-10">
+                    <!-- Preenchido JS -->
+                </div>
+            </div>
+            
+            <div id="saude-columns-container" class="flex flex-col md:flex-row gap-6 flex-1 overflow-x-auto pb-4 items-start">
+                <!-- Colunas Renderizadas via JS -->
+            </div>
+        </section>
+
         <!-- ================= PROPOSTAS LEGISLATIVAS ================= -->
         <section id="view-propostas" class="page ios-container h-full flex-col" style="display: none;">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -344,7 +377,6 @@
 
             <div class="flex flex-col md:flex-row gap-6 flex-1 overflow-x-auto pb-4 items-start">
                 
-                <!-- Coluna Em Andamento -->
                 <div class="flex-1 min-w-[320px] bg-orange-50 rounded-3xl p-4 flex flex-col border border-orange-100">
                     <h3 class="font-bold text-orange-700 mb-4 px-2 flex justify-between items-center">
                         Projetos em Andamento <span class="bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full text-xs" id="prop-count-andamento">0</span>
@@ -352,7 +384,6 @@
                     <div id="prop-andamento" class="flex-1 space-y-4"></div>
                 </div>
 
-                <!-- Coluna Aprovados -->
                 <div class="flex-1 min-w-[320px] bg-green-50 rounded-3xl p-4 flex flex-col border border-green-100">
                     <h3 class="font-bold text-green-700 mb-4 px-2 flex justify-between items-center">
                         Projetos Aprovados <span class="bg-green-200 text-green-800 px-2 py-0.5 rounded-full text-xs" id="prop-count-aprovado">0</span>
@@ -368,11 +399,7 @@
             <h2 class="text-2xl font-bold mb-6">Lideranças e Avisos</h2>
             
             <div class="flex flex-col lg:flex-row gap-6 flex-1 pb-10">
-                
-                <!-- Formulário Cadastro e Programação -->
                 <div class="w-full lg:w-1/3 flex flex-col gap-6">
-                    
-                    <!-- Cadastrar Líder -->
                     <div class="bg-white p-6 rounded-3xl shadow-apple">
                         <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="ph-fill ph-user-plus text-ios-blue"></i> Nova Liderança</h3>
                         <div class="space-y-3">
@@ -382,41 +409,27 @@
                             <button onclick="addLideranca()" class="w-full bg-ios-blue text-white py-2.5 rounded-xl font-bold ios-btn">Salvar Contato</button>
                         </div>
                     </div>
-
-                    <!-- Programar Disparo -->
                     <div class="bg-green-50 p-6 rounded-3xl border border-green-100 shadow-sm">
                         <h3 class="font-bold text-lg mb-4 text-green-800 flex items-center gap-2"><i class="ph-fill ph-whatsapp-logo"></i> Programar Aviso</h3>
                         <div class="space-y-3">
-                            <select id="disp-lideranca" class="ios-input bg-white text-sm">
-                                <!-- Preenchido JS -->
-                            </select>
+                            <select id="disp-lideranca" class="ios-input bg-white text-sm"></select>
                             <input type="date" id="disp-data" class="ios-input bg-white text-sm">
                             <textarea id="disp-mensagem" rows="3" placeholder="Mensagem do aviso (Ex: Kaká estará no bairro dia 10...)" class="ios-input bg-white resize-none text-sm"></textarea>
                             <button onclick="addDisparo()" class="w-full bg-ios-green text-white py-2.5 rounded-xl font-bold ios-btn">Agendar Disparo</button>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- Listas -->
                 <div class="w-full lg:w-2/3 flex flex-col gap-6">
-                    <!-- Avisos Programados -->
                     <div class="bg-white p-6 rounded-3xl shadow-apple flex-1">
                         <h3 class="font-bold text-lg mb-4">Avisos Programados</h3>
-                        <div id="lista-disparos" class="space-y-3">
-                            <!-- Preenchido JS -->
-                        </div>
+                        <div id="lista-disparos" class="space-y-3"></div>
                     </div>
-
-                    <!-- Lideranças Cadastradas -->
                     <div class="bg-white p-6 rounded-3xl shadow-apple max-h-[300px] overflow-y-auto">
                         <h3 class="font-bold text-lg mb-4">Rede de Lideranças</h3>
-                        <div id="lista-liderancas" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <!-- Preenchido JS -->
-                        </div>
+                        <div id="lista-liderancas" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -462,7 +475,7 @@
         <!-- ================= KANBAN (DEMANDAS) ================= -->
         <section id="view-kanban" class="page h-full flex-col" style="display: none;">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <h2 class="text-2xl font-bold">Demandas do Gabinete</h2>
+                <h2 class="text-2xl font-bold">Demandas Gerais do Gabinete</h2>
                 <div class="flex gap-2">
                     <button onclick="adicionarColuna()" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold ios-btn shadow-sm hover:bg-gray-50">+ Nova Etapa</button>
                     <button onclick="abrirModalDemanda()" class="bg-ios-purple text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-purple-500/30">+ Criar Demanda</button>
@@ -499,6 +512,9 @@
         <button onclick="switchTab('propostas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="propostas">
             <i class="ph ph-file-text text-2xl mb-1"></i><span class="text-[10px] font-medium">Projetos</span>
         </button>
+        <button onclick="switchTab('saude')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="saude">
+            <i class="ph ph-heartbeat text-2xl mb-1"></i><span class="text-[10px] font-medium">Saúde</span>
+        </button>
         <button onclick="switchTab('liderancas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="liderancas">
             <i class="ph ph-users-three text-2xl mb-1"></i><span class="text-[10px] font-medium">Liderança</span>
         </button>
@@ -513,7 +529,7 @@
         </button>
     </nav>
 
-    <!-- MODAL NOVA DEMANDA (KANBAN) -->
+    <!-- MODAL NOVA DEMANDA (KANBAN GERAL) -->
     <div id="modal-demanda" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <h3 class="text-xl font-bold mb-4" id="modal-demanda-title">Nova Demanda</h3>
@@ -560,9 +576,7 @@
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <h3 class="text-xl font-bold mb-4" id="modal-proposta-title">Novo Projeto de Lei</h3>
             <input type="text" id="prop-titulo" placeholder="Título ou Número do PL (Ex: PL 045/2026)" class="ios-input mb-3 font-semibold text-lg">
-            
             <textarea id="prop-descricao" rows="3" placeholder="Descrição completa do projeto..." class="ios-input resize-none mb-3 text-sm"></textarea>
-            
             <div class="grid grid-cols-2 gap-3 mb-5">
                 <div>
                     <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Situação Inicial</label>
@@ -580,10 +594,80 @@
                     <p id="prop-arquivo-nome" class="text-[10px] text-gray-400 mt-1 truncate">Nenhum arquivo...</p>
                 </div>
             </div>
-
             <div class="flex gap-3">
                 <button onclick="fecharModalProposta()" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold ios-btn">Cancelar</button>
                 <button onclick="salvarProposta()" id="btn-salvar-proposta" class="flex-1 bg-ios-blue text-white rounded-xl font-bold ios-btn">Salvar Projeto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVO CASO DE SAÚDE -->
+    <div id="modal-saude" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
+            <h3 class="text-xl font-bold mb-4 text-red-600 flex items-center gap-2" id="modal-saude-title"><i class="ph-fill ph-heartbeat"></i> Novo Caso de Saúde</h3>
+            <div class="space-y-3 mb-5">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Nome do Paciente</label>
+                    <input type="text" id="saude-paciente" placeholder="Ex: Maria José dos Santos" class="ios-input font-medium">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Telefone / WhatsApp (Apenas Números)</label>
+                    <input type="number" id="saude-telefone" placeholder="Ex: 5579999999999" class="ios-input">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Descrição do Caso / Necessidade</label>
+                    <textarea id="saude-caso" rows="3" placeholder="Ex: Necessita de cirurgia de catarata urgente, aguardando regulação..." class="ios-input resize-none text-sm"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="fecharModalSaude()" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold ios-btn">Cancelar</button>
+                <button onclick="salvarSaude()" id="btn-salvar-saude" class="flex-1 bg-red-500 text-white rounded-xl font-bold ios-btn">Criar Atendimento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALHES / COMENTÁRIOS / FOLLOW-UP DA SAÚDE -->
+    <div id="modal-saude-detalhes" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-4">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900" id="det-saude-paciente">Nome Paciente</h3>
+                    <p class="text-sm text-gray-500 mt-1" id="det-saude-caso">Descrição do caso</p>
+                </div>
+                <button onclick="fecharDetalhesSaude()" class="text-gray-400 hover:text-red-500 p-2"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            
+            <div class="flex gap-2 mb-4">
+                <a href="#" id="det-saude-whatsapp" target="_blank" class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-green-200 transition-colors">
+                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> Chamar no WhatsApp
+                </a>
+            </div>
+
+            <!-- Follow-up Control -->
+            <div class="bg-red-50 p-4 rounded-2xl border border-red-100 mb-4">
+                <p class="text-xs font-bold text-red-800 uppercase mb-2"><i class="ph-bold ph-bell-ringing"></i> Lembrete de Acompanhamento (Follow-up)</p>
+                <div class="flex flex-col sm:flex-row gap-3 items-center">
+                    <div class="flex-1 text-sm text-gray-700">Próximo contato marcado para: <strong id="det-saude-data-followup" class="text-red-600">Não definido</strong></div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <input type="date" id="input-saude-followup" class="ios-input py-1.5 text-sm w-auto">
+                        <button onclick="salvarFollowUpSaude()" class="bg-red-500 text-white px-3 py-1.5 rounded-lg font-bold text-sm hover:bg-red-600 transition-colors">Agendar</button>
+                    </div>
+                </div>
+                <div class="mt-2 flex gap-2">
+                    <button onclick="agendarFollowUpRapido(30)" class="text-[10px] bg-white border border-red-200 text-red-700 px-2 py-1 rounded hover:bg-red-100">Daqui 1 Mês</button>
+                    <button onclick="agendarFollowUpRapido(365)" class="text-[10px] bg-white border border-red-200 text-red-700 px-2 py-1 rounded hover:bg-red-100">Revisão Anual (1 Ano)</button>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="flex-1 overflow-y-auto pr-2 mb-4 space-y-3" id="det-saude-comentarios">
+                <!-- Comentarios renderizados via JS -->
+            </div>
+
+            <!-- Add Comment -->
+            <div class="flex gap-2 pt-3 border-t border-gray-100 mt-auto">
+                <input type="text" id="input-saude-comentario" placeholder="Escreva uma atualização sobre o caso..." class="ios-input flex-1">
+                <button onclick="adicionarComentarioSaude()" class="bg-ios-blue text-white px-4 rounded-xl font-bold hover:bg-blue-600 transition-colors"><i class="ph-bold ph-paper-plane-right"></i></button>
             </div>
         </div>
     </div>
@@ -602,36 +686,39 @@
         let visaoEmendaAtual = 'mapa';
         let demandaEmEdicaoId = null; 
         let propostaEmEdicaoId = null;
+        let saudeEmEdicaoId = null;
+        let casoSaudeAtivoId = null;
 
-        // Dados Iniciais (Mock - V6 para forçar estrutura nova)
+        // Dados Iniciais (Mock - V7 com Módulo de Saúde)
         const dadosPadrao = {
             colunasKanban: [ { id: 'todo', titulo: 'A Fazer' }, { id: 'doing', titulo: 'Em Andamento' }, { id: 'done', titulo: 'Concluído' } ],
-            emendas: [
-                { id: 1, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Saúde', objeto: 'Reforma Posto Central', justificativa: 'Estrutura antiga', executor: 'Prefeitura', valor: 250000, situacao: 'Pago' }
+            emendas: [ { id: 1, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Saúde', objeto: 'Reforma Posto Central', justificativa: 'Estrutura antiga', executor: 'Prefeitura', valor: 250000, situacao: 'Pago' } ],
+            agenda: [], kanban: [], notas: [], propostas: [], liderancas: [], disparos: [],
+            // DADOS SAÚDE
+            saudeColunas: [
+                { id: 's_triagem', titulo: 'Triagem / Recepção' },
+                { id: 's_agendado', titulo: 'Agendado / Na Fila' },
+                { id: 's_realizado', titulo: 'Procedimento Realizado' }
             ],
-            agenda: [],
-            kanban: [],
-            notas: [],
-            // NOVOS DADOS
-            propostas: [
-                { id: 1, titulo: 'PL 012/2026', descricao: 'Institui o programa de incentivo à leitura nas escolas da rede municipal, garantindo acervo mínimo.', status: 'andamento', arquivo: 'pl_leitura_v1.pdf' },
-                { id: 2, titulo: 'PL 045/2025', descricao: 'Redução de impostos para empresas de tecnologia no município.', status: 'aprovado', arquivo: 'pl_045_aprovado.pdf' }
-            ],
-            liderancas: [
-                { id: 1, nome: 'Marcos Almeida', base: 'Bairro Santa Rita - Tobias', telefone: '5511999998888' },
-                { id: 2, nome: 'Dona Maria', base: 'Povoado Barrinha', telefone: '5511977776666' }
-            ],
-            disparos: [
-                { id: 1, liderancaId: 1, data: '2026-03-15', mensagem: 'Olá Marcos, o deputado Kaká Santos estará visitando a UBS do Santa Rita no dia 15 pela manhã. Aguardamos sua presença!' }
+            saudeCasos: [
+                { 
+                    id: 's1', paciente: 'Dona Maria de Jesus', telefone: '5579988887777', 
+                    caso: 'Cirurgia de Catarata Olho Direito', status: 's_triagem', 
+                    dataCriacao: '2025-02-25', proximoFollowUp: '2026-02-25', // Exemplo de follow up vencendo hoje (1 ano dps)
+                    comentarios: [ { data: '2025-02-25T10:00:00', texto: 'Paciente deu entrada nos documentos da regulação.' } ]
+                }
             ]
         };
 
-        // Cache versão 6
-        let dados = JSON.parse(localStorage.getItem('mandato_v6')) || dadosPadrao;
+        let dados = JSON.parse(localStorage.getItem('mandato_v7')) || dadosPadrao;
 
-        function salvar() { localStorage.setItem('mandato_v6', JSON.stringify(dados)); }
+        function salvar() { localStorage.setItem('mandato_v7', JSON.stringify(dados)); }
         const formatarMoeda = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
         const formatarDataBR = d => d ? d.split('-').reverse().join('/') : '';
+        const formatarDataHoraBR = d => {
+            const date = new Date(d);
+            return `${date.toLocaleDateString('pt-BR')} às ${date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        };
 
         // ================= AUTH =================
         function fazerLogin() {
@@ -650,440 +737,321 @@
                     el.innerText = user.nome.substring(0,2).toUpperCase();
                     el.className = el.className.replace(/bg-\w+-\d+/g, '') + ' ' + user.cor + ' text-white';
                 });
-                
-                if(user.nome === 'Diogo' || user.id === 2) {
-                    document.getElementById('area-upload-pdf').style.display = 'block';
-                }
+                if(user.nome === 'Diogo' || user.id === 2) document.getElementById('area-upload-pdf').style.display = 'block';
 
                 const container = document.getElementById('kanban-responsaveis-list');
-                container.innerHTML = usuarios.map(u => 
-                    `<label class="flex items-center gap-1 text-sm bg-white border border-gray-200 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"><input type="checkbox" value="${u.id}" class="resp-check ios-checkbox accent-ios-purple w-4 h-4"> ${u.nome}</label>`
-                ).join('');
+                container.innerHTML = usuarios.map(u => `<label class="flex items-center gap-1 text-sm bg-white border border-gray-200 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"><input type="checkbox" value="${u.id}" class="resp-check ios-checkbox accent-ios-purple w-4 h-4"> ${u.nome}</label>`).join('');
 
-                renderAll();
-                switchTab('dashboard');
-            } else {
-                alert('Credenciais inválidas. Use diogo@kaka.com / 123');
-            }
+                renderAll(); switchTab('dashboard');
+            } else alert('Credenciais inválidas. Use diogo@kaka.com / 123');
         }
-
         function fazerLogout() { location.reload(); }
 
         // ================= NAV =================
         function switchTab(tabId) {
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-            
             document.querySelectorAll('.sidebar-btn').forEach(btn => {
-                if(btn.dataset.target === tabId) btn.classList.add('bg-gray-100', 'text-ios-blue');
-                else btn.classList.remove('bg-gray-100', 'text-ios-blue');
+                if(btn.dataset.target === tabId) btn.classList.add('bg-gray-100', 'text-ios-blue'); else btn.classList.remove('bg-gray-100', 'text-ios-blue');
             });
-
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 const icon = btn.querySelector('i');
-                if(btn.dataset.target === tabId) {
-                    btn.classList.replace('text-gray-400', 'text-ios-blue');
-                    icon.classList.replace('ph', 'ph-fill');
-                } else {
-                    btn.classList.replace('text-ios-blue', 'text-gray-400');
-                    icon.classList.replace('ph-fill', 'ph');
-                }
+                if(btn.dataset.target === tabId) { btn.classList.replace('text-gray-400', 'text-ios-blue'); icon.classList.replace('ph', 'ph-fill'); } 
+                else { btn.classList.replace('text-ios-blue', 'text-gray-400'); icon.classList.replace('ph-fill', 'ph'); }
             });
 
-            const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas', 'propostas': 'Propostas Legislativas', 'liderancas': 'Lideranças' };
+            const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas', 'propostas': 'Propostas Legislativas', 'liderancas': 'Lideranças', 'saude': 'Gestão de Saúde' };
             document.getElementById('mobile-title').innerText = titles[tabId];
 
             const target = document.getElementById(`view-${tabId}`);
-            if(tabId === 'kanban' || tabId === 'agenda' || tabId === 'propostas' || tabId === 'liderancas') target.style.display = 'flex';
+            if(['kanban', 'agenda', 'propostas', 'liderancas', 'saude'].includes(tabId)) target.style.display = 'flex';
             else target.style.display = 'block';
 
-            if(tabId === 'dashboard') renderDashboard();
-            if(tabId === 'emendas') renderEmendas();
-            if(tabId === 'agenda') renderCalendario();
-            if(tabId === 'kanban') renderKanban();
-            if(tabId === 'propostas') renderPropostas();
-            if(tabId === 'liderancas') renderLiderancas();
+            if(tabId === 'dashboard') renderDashboard(); if(tabId === 'emendas') renderEmendas(); if(tabId === 'agenda') renderCalendario();
+            if(tabId === 'kanban') renderKanban(); if(tabId === 'propostas') renderPropostas(); if(tabId === 'liderancas') renderLiderancas();
+            if(tabId === 'saude') renderSaude();
         }
 
-        // ================= PROPOSTAS LEGISLATIVAS =================
-        function renderPropostas() {
-            const andamentoList = document.getElementById('prop-andamento');
-            const aprovadoList = document.getElementById('prop-aprovado');
-            andamentoList.innerHTML = ''; aprovadoList.innerHTML = '';
+        // ================= SAÚDE (NOVO MÓDULO) =================
+        function renderSaude() {
+            const container = document.getElementById('saude-columns-container'); container.innerHTML = '';
             
-            let countAnd = 0, countAprov = 0;
+            // 1. Renderizar Colunas
+            dados.saudeColunas.forEach((col, index) => {
+                const isLastColumn = index === dados.saudeColunas.length - 1; 
+                const count = dados.saudeCasos.filter(k => k.status === col.id).length;
+                const headerClass = isLastColumn ? 'text-green-700' : 'text-red-700'; 
+                const badgeClass = isLastColumn ? 'bg-green-500 text-white' : 'bg-red-200 text-red-800'; 
+                const bgClass = isLastColumn ? 'bg-green-50/40 border-green-100' : 'bg-red-50/40 border-red-100';
 
-            dados.propostas.forEach(p => {
-                const isAprovado = p.status === 'aprovado';
-                if(isAprovado) countAprov++; else countAnd++;
-
-                const cardHTML = `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2 relative group">
-                        <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-lg text-gray-900 leading-tight pr-8">${p.titulo}</h4>
-                            <div class="flex gap-1 absolute right-3 top-3 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="editarProposta(${p.id})" class="text-gray-400 hover:text-ios-blue"><i class="ph-bold ph-pencil-simple"></i></button>
-                                <button onclick="deletarProposta(${p.id})" class="text-gray-400 hover:text-red-500"><i class="ph-bold ph-trash"></i></button>
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-600 line-clamp-3">${p.descricao}</p>
-                        
-                        <div class="mt-2 pt-3 border-t border-gray-100 flex flex-col gap-2">
-                            ${p.arquivo ? `<div class="flex items-center gap-1 text-xs font-bold text-ios-blue bg-blue-50 w-fit px-2 py-1 rounded"><i class="ph-bold ph-file-pdf"></i> ${p.arquivo}</div>` : ''}
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xs font-bold text-gray-500 uppercase">Status:</span>
-                                <select onchange="atualizarStatusProposta(${p.id}, this.value)" class="text-xs font-bold p-1 rounded border outline-none cursor-pointer ${isAprovado ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'}">
-                                    <option value="andamento" ${!isAprovado ? 'selected' : ''}>Em Andamento</option>
-                                    <option value="aprovado" ${isAprovado ? 'selected' : ''}>Aprovado</option>
-                                </select>
-                            </div>
-                        </div>
+                container.innerHTML += `
+                    <div class="flex-1 min-w-[320px] max-w-[380px] rounded-3xl p-4 flex flex-col border ${bgClass}">
+                        <h3 class="font-bold mb-4 px-2 flex justify-between items-center ${headerClass}">${col.titulo} <span class="${badgeClass} px-2 py-0.5 rounded-full text-xs">${count}</span></h3>
+                        <div id="ks-${col.id}" class="saude-column flex-1 space-y-3 min-h-[100px]" ondrop="dropSaude(event)" ondragover="allowDrop(event)"></div>
                     </div>`;
-
-                if(isAprovado) aprovadoList.innerHTML += cardHTML;
-                else andamentoList.innerHTML += cardHTML;
             });
 
-            document.getElementById('prop-count-andamento').innerText = countAnd;
-            document.getElementById('prop-count-aprovado').innerText = countAprov;
+            // 2. Alert System (Atrasados ou de Hoje)
+            const painelAlertas = document.getElementById('saude-alertas-panel');
+            const listaAlertas = document.getElementById('saude-alertas-list');
+            listaAlertas.innerHTML = '';
+            let atrasadosCount = 0;
+            const hoje = new Date().toISOString().split('T')[0];
+
+            // 3. Renderizar Cartões
+            dados.saudeCasos.forEach(k => {
+                let alertBadge = '';
+                if(k.proximoFollowUp && k.proximoFollowUp <= hoje) {
+                    atrasadosCount++;
+                    alertBadge = `<span class="absolute -top-2 -right-2 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border border-white"></span></span>`;
+                    listaAlertas.innerHTML += `<div class="bg-white/80 p-2 rounded-lg text-sm font-medium text-red-900 border border-red-100 cursor-pointer hover:bg-white" onclick="abrirDetalhesSaude('${k.id}')"><strong>${k.paciente}</strong> precisa de atenção! (Marcado para ${formatarDataBR(k.proximoFollowUp)})</div>`;
+                }
+
+                const cardHTML = `
+                    <div id="${k.id}" class="bg-white p-4 rounded-2xl shadow-apple border border-gray-100 cursor-grab active:cursor-grabbing flex flex-col gap-3 relative" draggable="true" ondragstart="dragSaude(event)">
+                        ${alertBadge}
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-gray-900 leading-tight pr-6">${k.paciente}</h4>
+                            <div class="flex gap-1 absolute right-3 top-3">
+                                <button onclick="editarSaude('${k.id}')" class="text-gray-300 hover:text-ios-blue transition-colors"><i class="ph-bold ph-pencil-simple"></i></button>
+                                <button onclick="deleteSaude('${k.id}')" class="text-gray-300 hover:text-red-500 transition-colors"><i class="ph-bold ph-trash"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 line-clamp-2 bg-gray-50 p-2 rounded-lg italic cursor-pointer" onclick="abrirDetalhesSaude('${k.id}')">${k.caso}</p>
+                        
+                        <div class="flex justify-between items-center mt-1 pt-3 border-t border-gray-100">
+                            <button onclick="abrirDetalhesSaude('${k.id}')" class="text-xs font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1"><i class="ph-bold ph-files"></i> Ver Histórico</button>
+                            <span class="text-xs text-gray-400"><i class="ph-bold ph-chat-circle"></i> ${k.comentarios.length}</span>
+                        </div>
+                    </div>`;
+                const colElement = document.getElementById(`ks-${k.status}`); if(colElement) colElement.innerHTML += cardHTML;
+            });
+
+            if(atrasadosCount > 0) painelAlertas.classList.remove('hidden'); else painelAlertas.classList.add('hidden');
+            
+            // Atualiza badge no dashboard
+            const dashBadge = document.getElementById('dash-saude-pendentes');
+            if(dashBadge) dashBadge.innerText = atrasadosCount;
         }
 
-        function abrirModalProposta() {
-            propostaEmEdicaoId = null;
-            document.getElementById('modal-proposta-title').innerText = 'Novo Projeto de Lei';
-            ['prop-titulo','prop-descricao'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('prop-status').value = 'andamento';
-            document.getElementById('prop-arquivo').value = '';
-            document.getElementById('prop-arquivo-nome').innerText = 'Nenhum arquivo...';
-            document.getElementById('modal-proposta').classList.remove('hidden');
+        function adicionarColunaSaude() {
+            const titulo = prompt("Digite o nome da nova fase de Saúde (ex: Aguardando Cirurgia):");
+            if(titulo && titulo.trim() !== '') { dados.saudeColunas.push({ id: 's_' + Date.now(), titulo }); salvar(); renderSaude(); }
         }
 
-        function fecharModalProposta() { document.getElementById('modal-proposta').classList.add('hidden'); }
-        
-        function atualizarNomeArquivo(input) {
-            if(input.files && input.files[0]) {
-                document.getElementById('prop-arquivo-nome').innerText = input.files[0].name;
+        function abrirModalSaude() {
+            saudeEmEdicaoId = null; document.getElementById('modal-saude-title').innerHTML = '<i class="ph-fill ph-heartbeat"></i> Novo Caso de Saúde'; document.getElementById('btn-salvar-saude').innerText = 'Criar Atendimento';
+            ['saude-paciente','saude-telefone','saude-caso'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('modal-saude').classList.remove('hidden');
+        }
+        function fecharModalSaude() { document.getElementById('modal-saude').classList.add('hidden'); }
+
+        function editarSaude(id) {
+            saudeEmEdicaoId = id; const s = dados.saudeCasos.find(d => d.id === id); if(!s) return;
+            document.getElementById('modal-saude-title').innerHTML = '<i class="ph-fill ph-pencil"></i> Editar Caso'; document.getElementById('btn-salvar-saude').innerText = 'Salvar Alterações';
+            document.getElementById('saude-paciente').value = s.paciente; document.getElementById('saude-telefone').value = s.telefone; document.getElementById('saude-caso').value = s.caso;
+            document.getElementById('modal-saude').classList.remove('hidden');
+        }
+
+        function salvarSaude() {
+            const paciente = document.getElementById('saude-paciente').value, telefone = document.getElementById('saude-telefone').value, caso = document.getElementById('saude-caso').value;
+            if(paciente && caso) {
+                if(saudeEmEdicaoId) {
+                    const idx = dados.saudeCasos.findIndex(d => d.id === saudeEmEdicaoId);
+                    if(idx > -1) dados.saudeCasos[idx] = { ...dados.saudeCasos[idx], paciente, telefone, caso };
+                } else {
+                    dados.saudeCasos.push({ id: 's' + Date.now(), paciente, telefone, caso, status: dados.saudeColunas[0].id, dataCriacao: new Date().toISOString().split('T')[0], proximoFollowUp: '', comentarios: [] });
+                }
+                salvar(); fecharModalSaude(); renderSaude(); renderDashboard();
+            } else { alert("Nome do paciente e Caso são obrigatórios."); }
+        }
+        function deleteSaude(id) { if(confirm("Deseja apagar o registro deste paciente?")) { dados.saudeCasos = dados.saudeCasos.filter(k => k.id !== id); salvar(); renderSaude(); renderDashboard(); } }
+
+        function dragSaude(ev) { ev.dataTransfer.setData("text/plain", "SAUDE:" + ev.target.id); }
+        function dropSaude(ev) {
+            ev.preventDefault(); 
+            const data = ev.dataTransfer.getData("text/plain");
+            if(!data.startsWith("SAUDE:")) return; // Evita que cartões do Kanban caiam aqui
+            const id = data.split(":")[1];
+            let col = ev.target;
+            while(!col.classList.contains('saude-column')) { col = col.parentElement; if(!col) return; }
+            const index = dados.saudeCasos.findIndex(k => k.id === id);
+            if(index > -1) { dados.saudeCasos[index].status = col.id.replace('ks-', ''); salvar(); renderSaude(); }
+        }
+
+        // ================= DETALHES DA SAÚDE E COMENTÁRIOS =================
+        function abrirDetalhesSaude(id) {
+            casoSaudeAtivoId = id; const s = dados.saudeCasos.find(d => d.id === id); if(!s) return;
+            document.getElementById('det-saude-paciente').innerText = s.paciente;
+            document.getElementById('det-saude-caso').innerText = s.caso;
+            
+            const btnWhats = document.getElementById('det-saude-whatsapp');
+            if(s.telefone) { btnWhats.href = `https://wa.me/${s.telefone.replace(/\D/g, '')}?text=Olá ${s.paciente}, aqui é da equipe do Dep. Kaká Santos...`; btnWhats.style.display = 'flex'; } 
+            else btnWhats.style.display = 'none';
+
+            document.getElementById('input-saude-followup').value = s.proximoFollowUp || '';
+            atualizarTextoFollowUp();
+            renderComentariosSaude();
+            document.getElementById('modal-saude-detalhes').classList.remove('hidden');
+        }
+        function fecharDetalhesSaude() { document.getElementById('modal-saude-detalhes').classList.add('hidden'); casoSaudeAtivoId = null; }
+
+        function atualizarTextoFollowUp() {
+            const s = dados.saudeCasos.find(d => d.id === casoSaudeAtivoId);
+            const label = document.getElementById('det-saude-data-followup');
+            if(s && s.proximoFollowUp) {
+                const hoje = new Date().toISOString().split('T')[0];
+                if(s.proximoFollowUp < hoje) label.innerHTML = `${formatarDataBR(s.proximoFollowUp)} (Atrasado!)`;
+                else if(s.proximoFollowUp === hoje) label.innerHTML = `${formatarDataBR(s.proximoFollowUp)} (Hoje!)`;
+                else label.innerHTML = formatarDataBR(s.proximoFollowUp);
+                label.className = (s.proximoFollowUp <= hoje) ? 'text-red-600 font-bold' : 'text-green-600 font-bold';
+            } else {
+                label.innerHTML = 'Não definido'; label.className = 'text-gray-500';
             }
         }
 
-        function editarProposta(id) {
-            propostaEmEdicaoId = id;
-            const p = dados.propostas.find(x => x.id === id);
-            if(!p) return;
-            document.getElementById('modal-proposta-title').innerText = 'Editar Projeto';
-            document.getElementById('prop-titulo').value = p.titulo;
-            document.getElementById('prop-descricao').value = p.descricao;
-            document.getElementById('prop-status').value = p.status;
-            document.getElementById('prop-arquivo-nome').innerText = p.arquivo || 'Nenhum arquivo...';
-            document.getElementById('modal-proposta').classList.remove('hidden');
+        function salvarFollowUpSaude() {
+            const data = document.getElementById('input-saude-followup').value;
+            const idx = dados.saudeCasos.findIndex(d => d.id === casoSaudeAtivoId);
+            if(idx > -1) { dados.saudeCasos[idx].proximoFollowUp = data; salvar(); atualizarTextoFollowUp(); renderSaude(); }
         }
 
-        function salvarProposta() {
-            const titulo = document.getElementById('prop-titulo').value;
-            const descricao = document.getElementById('prop-descricao').value;
-            const status = document.getElementById('prop-status').value;
-            const inputArq = document.getElementById('prop-arquivo');
-            let arquivo = document.getElementById('prop-arquivo-nome').innerText;
-            if(arquivo === 'Nenhum arquivo...') arquivo = null;
-
-            // Se upou arquivo novo (mock)
-            if(inputArq.files && inputArq.files[0]) arquivo = inputArq.files[0].name;
-
-            if(titulo) {
-                if(propostaEmEdicaoId) {
-                    const idx = dados.propostas.findIndex(x => x.id === propostaEmEdicaoId);
-                    if(idx > -1) dados.propostas[idx] = { ...dados.propostas[idx], titulo, descricao, status, arquivo };
-                } else {
-                    dados.propostas.unshift({ id: Date.now(), titulo, descricao, status, arquivo });
-                }
-                salvar(); fecharModalProposta(); renderPropostas();
-            } else { alert("O Título do projeto é obrigatório."); }
+        function agendarFollowUpRapido(dias) {
+            const data = new Date(); data.setDate(data.getDate() + dias);
+            document.getElementById('input-saude-followup').value = data.toISOString().split('T')[0];
+            salvarFollowUpSaude();
         }
 
-        function deletarProposta(id) {
-            if(confirm("Apagar projeto de lei?")) { dados.propostas = dados.propostas.filter(x => x.id !== id); salvar(); renderPropostas(); }
-        }
-
-        function atualizarStatusProposta(id, novoStatus) {
-            const idx = dados.propostas.findIndex(x => x.id === id);
-            if(idx > -1) { dados.propostas[idx].status = novoStatus; salvar(); renderPropostas(); }
-        }
-
-        // ================= LIDERANÇAS & DISPAROS =================
-        function renderLiderancas() {
-            const selectDisp = document.getElementById('disp-lideranca');
-            const listaLid = document.getElementById('lista-liderancas');
-            const listaDisp = document.getElementById('lista-disparos');
+        function renderComentariosSaude() {
+            const s = dados.saudeCasos.find(d => d.id === casoSaudeAtivoId);
+            const container = document.getElementById('det-saude-comentarios'); container.innerHTML = '';
+            if(s.comentarios.length === 0) { container.innerHTML = '<p class="text-sm text-gray-400 italic text-center mt-4">Nenhuma atualização registrada ainda.</p>'; return; }
             
-            // 1. Renderiza Lideranças Select & Lista
-            selectDisp.innerHTML = '<option value="" disabled selected>Selecione a Liderança...</option>';
-            listaLid.innerHTML = '';
-            
-            dados.liderancas.forEach(l => {
-                selectDisp.innerHTML += `<option value="${l.id}">${l.nome} (${l.base})</option>`;
-                listaLid.innerHTML += `
-                    <div class="bg-gray-50 border border-gray-100 p-3 rounded-xl flex justify-between items-center relative group">
-                        <div>
-                            <p class="font-bold text-sm text-gray-800">${l.nome}</p>
-                            <p class="text-xs text-gray-500">${l.base} <br> <span class="font-medium text-ios-green">${l.telefone}</span></p>
-                        </div>
-                        <button onclick="deletarLideranca(${l.id})" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-2"><i class="ph-bold ph-trash"></i></button>
+            // Ordena mais recente embaixo (estilo chat)
+            s.comentarios.sort((a,b) => new Date(a.data) - new Date(b.data)).forEach(c => {
+                container.innerHTML += `
+                    <div class="bg-gray-50 p-3 rounded-2xl rounded-tl-sm border border-gray-100 w-[90%]">
+                        <p class="text-[10px] font-bold text-gray-400 mb-1">${formatarDataHoraBR(c.data)}</p>
+                        <p class="text-sm text-gray-800">${c.texto}</p>
                     </div>`;
             });
+            container.scrollTop = container.scrollHeight; // Scroll to bottom
+        }
+
+        function adicionarComentarioSaude() {
+            const input = document.getElementById('input-saude-comentario'); const texto = input.value;
+            if(texto && casoSaudeAtivoId) {
+                const idx = dados.saudeCasos.findIndex(d => d.id === casoSaudeAtivoId);
+                dados.saudeCasos[idx].comentarios.push({ data: new Date().toISOString(), texto });
+                salvar(); input.value = ''; renderComentariosSaude(); renderSaude();
+            }
+        }
+
+        // ================= OUTROS SCRIPTS (MANTIDOS) =================
+        function renderPropostas() {
+            const andamentoList = document.getElementById('prop-andamento'); const aprovadoList = document.getElementById('prop-aprovado');
+            andamentoList.innerHTML = ''; aprovadoList.innerHTML = ''; let countAnd = 0, countAprov = 0;
+            dados.propostas.forEach(p => {
+                const isAprovado = p.status === 'aprovado'; if(isAprovado) countAprov++; else countAnd++;
+                const cardHTML = `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2 relative group"><div class="flex justify-between items-start"><h4 class="font-bold text-lg text-gray-900 leading-tight pr-8">${p.titulo}</h4><div class="flex gap-1 absolute right-3 top-3 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="editarProposta(${p.id})" class="text-gray-400 hover:text-ios-blue"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="deletarProposta(${p.id})" class="text-gray-400 hover:text-red-500"><i class="ph-bold ph-trash"></i></button></div></div><p class="text-sm text-gray-600 line-clamp-3">${p.descricao}</p><div class="mt-2 pt-3 border-t border-gray-100 flex flex-col gap-2">${p.arquivo ? `<div class="flex items-center gap-1 text-xs font-bold text-ios-blue bg-blue-50 w-fit px-2 py-1 rounded"><i class="ph-bold ph-file-pdf"></i> ${p.arquivo}</div>` : ''}<div class="flex items-center gap-2 mt-1"><span class="text-xs font-bold text-gray-500 uppercase">Status:</span><select onchange="atualizarStatusProposta(${p.id}, this.value)" class="text-xs font-bold p-1 rounded border outline-none cursor-pointer ${isAprovado ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'}"><option value="andamento" ${!isAprovado ? 'selected' : ''}>Em Andamento</option><option value="aprovado" ${isAprovado ? 'selected' : ''}>Aprovado</option></select></div></div></div>`;
+                if(isAprovado) aprovadoList.innerHTML += cardHTML; else andamentoList.innerHTML += cardHTML;
+            });
+            document.getElementById('prop-count-andamento').innerText = countAnd; document.getElementById('prop-count-aprovado').innerText = countAprov;
+        }
+        function abrirModalProposta() { propostaEmEdicaoId = null; document.getElementById('modal-proposta-title').innerText = 'Novo Projeto de Lei'; ['prop-titulo','prop-descricao'].forEach(id => document.getElementById(id).value = ''); document.getElementById('prop-status').value = 'andamento'; document.getElementById('prop-arquivo').value = ''; document.getElementById('prop-arquivo-nome').innerText = 'Nenhum arquivo...'; document.getElementById('modal-proposta').classList.remove('hidden'); }
+        function fecharModalProposta() { document.getElementById('modal-proposta').classList.add('hidden'); }
+        function atualizarNomeArquivo(input) { if(input.files && input.files[0]) document.getElementById('prop-arquivo-nome').innerText = input.files[0].name; }
+        function editarProposta(id) { propostaEmEdicaoId = id; const p = dados.propostas.find(x => x.id === id); if(!p) return; document.getElementById('modal-proposta-title').innerText = 'Editar Projeto'; document.getElementById('prop-titulo').value = p.titulo; document.getElementById('prop-descricao').value = p.descricao; document.getElementById('prop-status').value = p.status; document.getElementById('prop-arquivo-nome').innerText = p.arquivo || 'Nenhum arquivo...'; document.getElementById('modal-proposta').classList.remove('hidden'); }
+        function salvarProposta() {
+            const titulo = document.getElementById('prop-titulo').value, descricao = document.getElementById('prop-descricao').value, status = document.getElementById('prop-status').value;
+            const inputArq = document.getElementById('prop-arquivo'); let arquivo = document.getElementById('prop-arquivo-nome').innerText; if(arquivo === 'Nenhum arquivo...') arquivo = null;
+            if(inputArq.files && inputArq.files[0]) arquivo = inputArq.files[0].name;
+            if(titulo) {
+                if(propostaEmEdicaoId) { const idx = dados.propostas.findIndex(x => x.id === propostaEmEdicaoId); if(idx > -1) dados.propostas[idx] = { ...dados.propostas[idx], titulo, descricao, status, arquivo }; }
+                else dados.propostas.unshift({ id: Date.now(), titulo, descricao, status, arquivo });
+                salvar(); fecharModalProposta(); renderPropostas();
+            } else alert("O Título do projeto é obrigatório.");
+        }
+        function deletarProposta(id) { if(confirm("Apagar projeto de lei?")) { dados.propostas = dados.propostas.filter(x => x.id !== id); salvar(); renderPropostas(); } }
+        function atualizarStatusProposta(id, novoStatus) { const idx = dados.propostas.findIndex(x => x.id === id); if(idx > -1) { dados.propostas[idx].status = novoStatus; salvar(); renderPropostas(); } }
+
+        function renderLiderancas() {
+            const selectDisp = document.getElementById('disp-lideranca'), listaLid = document.getElementById('lista-liderancas'), listaDisp = document.getElementById('lista-disparos');
+            selectDisp.innerHTML = '<option value="" disabled selected>Selecione a Liderança...</option>'; listaLid.innerHTML = '';
+            dados.liderancas.forEach(l => {
+                selectDisp.innerHTML += `<option value="${l.id}">${l.nome} (${l.base})</option>`;
+                listaLid.innerHTML += `<div class="bg-gray-50 border border-gray-100 p-3 rounded-xl flex justify-between items-center relative group"><div><p class="font-bold text-sm text-gray-800">${l.nome}</p><p class="text-xs text-gray-500">${l.base} <br> <span class="font-medium text-ios-green">${l.telefone}</span></p></div><button onclick="deletarLideranca(${l.id})" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-2"><i class="ph-bold ph-trash"></i></button></div>`;
+            });
             if(dados.liderancas.length===0) listaLid.innerHTML = '<p class="text-sm text-gray-400">Nenhuma liderança cadastrada.</p>';
-
-            // 2. Renderiza Disparos Programados
-            listaDisp.innerHTML = '';
-            // Ordenar por data
-            const disparosOrd = [...dados.disparos].sort((a,b) => new Date(a.data) - new Date(b.data));
-            
+            listaDisp.innerHTML = ''; const disparosOrd = [...dados.disparos].sort((a,b) => new Date(a.data) - new Date(b.data));
             disparosOrd.forEach(d => {
-                const lid = dados.liderancas.find(x => x.id == d.liderancaId);
-                if(!lid) return;
-
-                let msgEncoded = encodeURIComponent(d.mensagem);
-                let link = `https://wa.me/${lid.telefone.replace(/\D/g, '')}?text=${msgEncoded}`;
-
-                listaDisp.innerHTML += `
-                    <div class="border-l-4 border-ios-green bg-gray-50 p-4 rounded-xl relative group">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="font-bold text-sm text-gray-800">Para: ${lid.nome}</p>
-                            <p class="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded"><i class="ph-bold ph-calendar-blank"></i> ${formatarDataBR(d.data)}</p>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-3 bg-white p-2 border border-gray-100 rounded-lg italic line-clamp-2">"${d.mensagem}"</p>
-                        
-                        <div class="flex gap-2">
-                            <button onclick="window.open('${link}', '_blank')" class="flex-1 bg-ios-green text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-1 hover:bg-green-600 transition-colors">
-                                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Enviar WhatsApp
-                            </button>
-                            <button onclick="deletarDisparo(${d.id})" class="px-3 bg-gray-200 text-gray-600 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors"><i class="ph-bold ph-trash"></i></button>
-                        </div>
-                    </div>`;
+                const lid = dados.liderancas.find(x => x.id == d.liderancaId); if(!lid) return;
+                let msgEncoded = encodeURIComponent(d.mensagem); let link = `https://wa.me/${lid.telefone.replace(/\D/g, '')}?text=${msgEncoded}`;
+                listaDisp.innerHTML += `<div class="border-l-4 border-ios-green bg-gray-50 p-4 rounded-xl relative group"><div class="flex justify-between items-start mb-2"><p class="font-bold text-sm text-gray-800">Para: ${lid.nome}</p><p class="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded"><i class="ph-bold ph-calendar-blank"></i> ${formatarDataBR(d.data)}</p></div><p class="text-sm text-gray-600 mb-3 bg-white p-2 border border-gray-100 rounded-lg italic line-clamp-2">"${d.mensagem}"</p><div class="flex gap-2"><button onclick="window.open('${link}', '_blank')" class="flex-1 bg-ios-green text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-1 hover:bg-green-600 transition-colors"><i class="ph-bold ph-whatsapp-logo text-lg"></i> Enviar WhatsApp</button><button onclick="deletarDisparo(${d.id})" class="px-3 bg-gray-200 text-gray-600 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors"><i class="ph-bold ph-trash"></i></button></div></div>`;
             });
             if(dados.disparos.length===0) listaDisp.innerHTML = '<p class="text-sm text-gray-400">Nenhum aviso programado.</p>';
         }
+        function addLideranca() { const nome = document.getElementById('lid-nome').value, base = document.getElementById('lid-base').value, telefone = document.getElementById('lid-telefone').value; if(nome && telefone) { dados.liderancas.push({ id: Date.now(), nome, base, telefone }); salvar(); ['lid-nome','lid-base','lid-telefone'].forEach(id => document.getElementById(id).value = ''); renderLiderancas(); } else alert('Nome e Telefone são obrigatórios.'); }
+        function deletarLideranca(id) { if(confirm('Apagar contato?')) { dados.liderancas = dados.liderancas.filter(x => x.id !== id); salvar(); renderLiderancas(); } }
+        function addDisparo() { const liderancaId = document.getElementById('disp-lideranca').value, data = document.getElementById('disp-data').value, mensagem = document.getElementById('disp-mensagem').value; if(liderancaId && data && mensagem) { dados.disparos.push({ id: Date.now(), liderancaId, data, mensagem }); salvar(); ['disp-data','disp-mensagem'].forEach(id => document.getElementById(id).value = ''); renderLiderancas(); } else alert('Selecione liderança, data e digite a mensagem.'); }
+        function deletarDisparo(id) { if(confirm('Cancelar este agendamento?')) { dados.disparos = dados.disparos.filter(x => x.id !== id); salvar(); renderLiderancas(); } }
 
-        function addLideranca() {
-            const nome = document.getElementById('lid-nome').value;
-            const base = document.getElementById('lid-base').value;
-            const telefone = document.getElementById('lid-telefone').value;
-            if(nome && telefone) {
-                dados.liderancas.push({ id: Date.now(), nome, base, telefone });
-                salvar(); ['lid-nome','lid-base','lid-telefone'].forEach(id => document.getElementById(id).value = '');
-                renderLiderancas();
-            } else alert('Nome e Telefone são obrigatórios.');
-        }
-
-        function deletarLideranca(id) {
-            if(confirm('Apagar contato da liderança? Isso não apaga os disparos já programados.')) {
-                dados.liderancas = dados.liderancas.filter(x => x.id !== id); salvar(); renderLiderancas();
-            }
-        }
-
-        function addDisparo() {
-            const liderancaId = document.getElementById('disp-lideranca').value;
-            const data = document.getElementById('disp-data').value;
-            const mensagem = document.getElementById('disp-mensagem').value;
-            if(liderancaId && data && mensagem) {
-                dados.disparos.push({ id: Date.now(), liderancaId, data, mensagem });
-                salvar(); ['disp-data','disp-mensagem'].forEach(id => document.getElementById(id).value = '');
-                renderLiderancas();
-            } else alert('Selecione liderança, data e digite a mensagem.');
-        }
-
-        function deletarDisparo(id) {
-            if(confirm('Cancelar este agendamento de mensagem?')) {
-                dados.disparos = dados.disparos.filter(x => x.id !== id); salvar(); renderLiderancas();
-            }
-        }
-
-        // ================= (OUTROS MÓDULOS MANTIDOS: EMENDAS, AGENDA, KANBAN, NOTAS) =================
         function renderEmendas() {
-            const anoSelecionado = document.getElementById('filtro-ano').value;
-            let emendasFiltradas = dados.emendas.filter(e => e.tipo === tipoEmendaAtual);
+            const anoSelecionado = document.getElementById('filtro-ano').value; let emendasFiltradas = dados.emendas.filter(e => e.tipo === tipoEmendaAtual);
             if(anoSelecionado !== 'todos') emendasFiltradas = emendasFiltradas.filter(e => e.ano == anoSelecionado);
-            if(visaoEmendaAtual === 'mapa') renderMapaEmendas(emendasFiltradas);
-            else renderRelatorioEmendas(emendasFiltradas);
+            if(visaoEmendaAtual === 'mapa') renderMapaEmendas(emendasFiltradas); else renderRelatorioEmendas(emendasFiltradas);
         }
-
         function renderMapaEmendas(emendasFiltradas) {
-            const mapaCidades = {};
-            emendasFiltradas.forEach(e => {
-                if(!mapaCidades[e.cidade]) mapaCidades[e.cidade] = { valor: 0, areas: {} };
-                mapaCidades[e.cidade].valor += e.valor;
-            });
-
-            const mapContainer = document.getElementById('mapa-sergipe');
-            mapContainer.innerHTML = '';
+            const mapaCidades = {}; emendasFiltradas.forEach(e => { if(!mapaCidades[e.cidade]) mapaCidades[e.cidade] = { valor: 0, areas: {} }; mapaCidades[e.cidade].valor += e.valor; });
+            const mapContainer = document.getElementById('mapa-sergipe'); mapContainer.innerHTML = '';
             const cidadesOrdenadas = Object.keys(mapaCidades).map(k => ({ nome: k, ...mapaCidades[k] })).sort((a,b) => b.valor - a.valor);
-
-            cidadesOrdenadas.forEach(c => {
-                const maxVal = cidadesOrdenadas[0].valor || 1;
-                const percent = (c.valor / maxVal);
-                let bgClass = 'bg-blue-100 text-blue-900';
-                if(percent > 0.3) bgClass = 'bg-blue-300 text-blue-900';
-                if(percent > 0.6) bgClass = 'bg-blue-500 text-white';
-                if(percent > 0.8) bgClass = 'bg-blue-700 text-white';
-                mapContainer.innerHTML += `
-                    <div onclick="abrirDetalheCidade('${c.nome}')" class="${bgClass} heatmap-cell rounded-2xl p-3 flex flex-col justify-center items-center text-center aspect-square shadow-sm relative overflow-hidden group border border-blue-900/10">
-                        <span class="font-bold text-sm leading-tight z-10">${c.nome}</span>
-                        <span class="text-[10px] opacity-80 z-10">${formatarMoeda(c.valor)}</span>
-                    </div>`;
-            });
+            cidadesOrdenadas.forEach(c => { const maxVal = cidadesOrdenadas[0].valor || 1; const percent = (c.valor / maxVal); let bgClass = 'bg-blue-100 text-blue-900'; if(percent > 0.3) bgClass = 'bg-blue-300 text-blue-900'; if(percent > 0.6) bgClass = 'bg-blue-500 text-white'; if(percent > 0.8) bgClass = 'bg-blue-700 text-white'; mapContainer.innerHTML += `<div onclick="abrirDetalheCidade('${c.nome}')" class="${bgClass} heatmap-cell rounded-2xl p-3 flex flex-col justify-center items-center text-center aspect-square shadow-sm relative overflow-hidden group border border-blue-900/10"><span class="font-bold text-sm leading-tight z-10">${c.nome}</span><span class="text-[10px] opacity-80 z-10">${formatarMoeda(c.valor)}</span></div>`; });
             if(cidadesOrdenadas.length === 0) mapContainer.innerHTML = '<p class="col-span-full text-center text-gray-400 py-6 font-medium">Nenhum dado encontrado para o filtro atual.</p>';
-
             const listaRanking = document.getElementById('lista-ranking-cidades'); listaRanking.innerHTML = '';
-            cidadesOrdenadas.forEach((c, idx) => {
-                listaRanking.innerHTML += `
-                    <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-xl cursor-pointer border border-transparent hover:border-gray-200 transition-colors" onclick="abrirDetalheCidade('${c.nome}')">
-                        <div class="flex items-center gap-3">
-                            <span class="w-6 h-6 rounded-full ${idx < 3 ? 'bg-ios-blue text-white' : 'bg-gray-200 text-gray-600'} text-xs font-bold flex items-center justify-center">${idx+1}</span>
-                            <span class="font-medium text-gray-700">${c.nome}</span>
-                        </div>
-                        <span class="font-bold text-ios-blue text-sm">${formatarMoeda(c.valor)}</span>
-                    </div>`;
-            });
-
+            cidadesOrdenadas.forEach((c, idx) => { listaRanking.innerHTML += `<div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-xl cursor-pointer border border-transparent hover:border-gray-200 transition-colors" onclick="abrirDetalheCidade('${c.nome}')"><div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full ${idx < 3 ? 'bg-ios-blue text-white' : 'bg-gray-200 text-gray-600'} text-xs font-bold flex items-center justify-center">${idx+1}</span><span class="font-medium text-gray-700">${c.nome}</span></div><span class="font-bold text-ios-blue text-sm">${formatarMoeda(c.valor)}</span></div>`; });
             const areasGlobal = {}; emendasFiltradas.forEach(e => areasGlobal[e.area] = (areasGlobal[e.area]||0) + e.valor);
-            const listaAreas = document.getElementById('lista-areas-geral'); listaAreas.innerHTML = '';
-            const totalGeral = emendasFiltradas.reduce((sum, e) => sum + e.valor, 0);
-
-            Object.keys(areasGlobal).sort((a,b) => areasGlobal[b] - areasGlobal[a]).forEach(area => {
-                const val = areasGlobal[area]; const pct = ((val / totalGeral) * 100).toFixed(1);
-                listaAreas.innerHTML += `
-                    <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="font-semibold text-gray-700">${area}</span><span class="text-gray-500">${pct}%</span></div>
-                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div class="bg-ios-blue h-2 rounded-full" style="width: ${pct}%"></div></div>
-                    </div>`;
-            });
+            const listaAreas = document.getElementById('lista-areas-geral'); listaAreas.innerHTML = ''; const totalGeral = emendasFiltradas.reduce((sum, e) => sum + e.valor, 0);
+            Object.keys(areasGlobal).sort((a,b) => areasGlobal[b] - areasGlobal[a]).forEach(area => { const val = areasGlobal[area]; const pct = ((val / totalGeral) * 100).toFixed(1); listaAreas.innerHTML += `<div><div class="flex justify-between text-xs mb-1"><span class="font-semibold text-gray-700">${area}</span><span class="text-gray-500">${pct}%</span></div><div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div class="bg-ios-blue h-2 rounded-full" style="width: ${pct}%"></div></div></div>`; });
         }
-
         function renderRelatorioEmendas(emendasFiltradas) {
-            const tbody = document.getElementById('tabela-relatorio-body'); tbody.innerHTML = '';
-            const isDiogo = (usuarioLogado.nome === 'Diogo' || usuarioLogado.id === 2);
-            emendasFiltradas.forEach(e => {
-                let statusBadge = isDiogo 
-                    ? `<select onchange="atualizarSituacaoEmenda(${e.id}, this.value)" class="text-xs font-bold p-1 rounded border outline-none cursor-pointer ${e.situacao === 'Pago' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}">
-                            <option value="Pendente" ${e.situacao === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                            <option value="Pago" ${e.situacao === 'Pago' ? 'selected' : ''}>Pago</option>
-                       </select>`
-                    : `<span class="px-2 py-1 rounded-md text-xs font-bold ${e.situacao === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${e.situacao || 'Pendente'}</span>`;
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 transition-colors group">
-                        <td class="p-3 font-semibold text-gray-900">${e.cidade}</td>
-                        <td class="p-3"><span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-[11px] font-bold uppercase">${e.area}</span></td>
-                        <td class="p-3"><p class="font-bold text-gray-800">${e.objeto}</p><p class="text-xs text-gray-500 mt-0.5 line-clamp-2" title="${e.justificativa}">${e.justificativa || 'Sem justificativa'}</p></td>
-                        <td class="p-3 text-sm text-gray-600">${e.executor}</td>
-                        <td class="p-3 text-right font-bold text-ios-blue">${formatarMoeda(e.valor)}</td>
-                        <td class="p-3 text-center">${statusBadge}</td>
-                    </tr>`;
-            });
+            const tbody = document.getElementById('tabela-relatorio-body'); tbody.innerHTML = ''; const isDiogo = (usuarioLogado.nome === 'Diogo' || usuarioLogado.id === 2);
+            emendasFiltradas.forEach(e => { let statusBadge = isDiogo ? `<select onchange="atualizarSituacaoEmenda(${e.id}, this.value)" class="text-xs font-bold p-1 rounded border outline-none cursor-pointer ${e.situacao === 'Pago' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}"><option value="Pendente" ${e.situacao === 'Pendente' ? 'selected' : ''}>Pendente</option><option value="Pago" ${e.situacao === 'Pago' ? 'selected' : ''}>Pago</option></select>` : `<span class="px-2 py-1 rounded-md text-xs font-bold ${e.situacao === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${e.situacao || 'Pendente'}</span>`; tbody.innerHTML += `<tr class="hover:bg-gray-50 transition-colors group"><td class="p-3 font-semibold text-gray-900">${e.cidade}</td><td class="p-3"><span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-[11px] font-bold uppercase">${e.area}</span></td><td class="p-3"><p class="font-bold text-gray-800">${e.objeto}</p><p class="text-xs text-gray-500 mt-0.5 line-clamp-2" title="${e.justificativa}">${e.justificativa || 'Sem justificativa'}</p></td><td class="p-3 text-sm text-gray-600">${e.executor}</td><td class="p-3 text-right font-bold text-ios-blue">${formatarMoeda(e.valor)}</td><td class="p-3 text-center">${statusBadge}</td></tr>`; });
             if(emendasFiltradas.length === 0) tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-500">Nenhuma emenda encontrada para este filtro.</td></tr>';
         }
-
-        function atualizarSituacaoEmenda(id, novaSituacao) {
-            const index = dados.emendas.findIndex(e => e.id === id);
-            if(index > -1) { dados.emendas[index].situacao = novaSituacao; salvar(); renderEmendas(); }
-        }
-
+        function atualizarSituacaoEmenda(id, novaSituacao) { const index = dados.emendas.findIndex(e => e.id === id); if(index > -1) { dados.emendas[index].situacao = novaSituacao; salvar(); renderEmendas(); } }
         function abrirDetalheCidade(nomeCidade) {
-            const container = document.getElementById('detalhe-cidade-container');
-            const anoSelecionado = document.getElementById('filtro-ano').value;
-            let itens = dados.emendas.filter(e => e.cidade === nomeCidade && e.tipo === tipoEmendaAtual);
-            if(anoSelecionado !== 'todos') itens = itens.filter(e => e.ano == anoSelecionado);
-            const filtroTobias = document.getElementById('tobias-filter-area');
-            if(nomeCidade === 'Tobias Barreto') {
-                filtroTobias.classList.remove('hidden');
-                const bairroSelecionado = document.getElementById('filtro-bairro-tobias').value;
-                if(bairroSelecionado !== 'todos') itens = itens.filter(e => e.bairro === bairroSelecionado);
-            } else { filtroTobias.classList.add('hidden'); }
-            const total = itens.reduce((sum, e) => sum + e.valor, 0);
-            const areas = {}; itens.forEach(e => areas[e.area] = (areas[e.area]||0) + e.valor);
-            const topArea = Object.keys(areas).sort((a,b) => areas[b] - areas[a])[0] || '-';
-            document.getElementById('det-cidade-nome').innerText = nomeCidade;
-            document.getElementById('det-cidade-valor').innerText = formatarMoeda(total);
-            document.getElementById('det-cidade-area').innerText = topArea;
-            container.classList.remove('hidden'); container.classList.remove('animate-pulse');
-            if(window.innerWidth < 768) container.scrollIntoView({ behavior: 'smooth' });
+            const container = document.getElementById('detalhe-cidade-container'); const anoSelecionado = document.getElementById('filtro-ano').value;
+            let itens = dados.emendas.filter(e => e.cidade === nomeCidade && e.tipo === tipoEmendaAtual); if(anoSelecionado !== 'todos') itens = itens.filter(e => e.ano == anoSelecionado);
+            const filtroTobias = document.getElementById('tobias-filter-area'); if(nomeCidade === 'Tobias Barreto') { filtroTobias.classList.remove('hidden'); const bairroSelecionado = document.getElementById('filtro-bairro-tobias').value; if(bairroSelecionado !== 'todos') itens = itens.filter(e => e.bairro === bairroSelecionado); } else filtroTobias.classList.add('hidden');
+            const total = itens.reduce((sum, e) => sum + e.valor, 0); const areas = {}; itens.forEach(e => areas[e.area] = (areas[e.area]||0) + e.valor); const topArea = Object.keys(areas).sort((a,b) => areas[b] - areas[a])[0] || '-';
+            document.getElementById('det-cidade-nome').innerText = nomeCidade; document.getElementById('det-cidade-valor').innerText = formatarMoeda(total); document.getElementById('det-cidade-area').innerText = topArea;
+            container.classList.remove('hidden'); container.classList.remove('animate-pulse'); if(window.innerWidth < 768) container.scrollIntoView({ behavior: 'smooth' });
         }
         function fecharDetalhes() { document.getElementById('detalhe-cidade-container').classList.add('hidden'); }
         function filtrarBairroTobias() { abrirDetalheCidade('Tobias Barreto'); }
         function simularUploadPDF(input) {
-            if(input.files && input.files[0]) {
-                const ano = document.getElementById('filtro-ano').value === 'todos' ? 2026 : parseInt(document.getElementById('filtro-ano').value);
-                alert(`Lendo arquivo PDF para o ano ${ano}... (Simulação)`);
-                setTimeout(() => {
-                    dados.emendas.push({ id: Date.now(), ano: ano, tipo: tipoEmendaAtual, cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Infraestrutura', objeto: 'Obra Importada', justificativa: 'Lida via PDF', executor: 'Obras', valor: 200000, situacao: 'Pendente' });
-                    salvar(); renderEmendas(); renderDashboard(); alert("Dados importados com sucesso!");
-                }, 1000);
-            }
+            if(input.files && input.files[0]) { const ano = document.getElementById('filtro-ano').value === 'todos' ? 2026 : parseInt(document.getElementById('filtro-ano').value); alert(`Lendo arquivo PDF para o ano ${ano}... (Simulação)`); setTimeout(() => { dados.emendas.push({ id: Date.now(), ano: ano, tipo: tipoEmendaAtual, cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Infraestrutura', objeto: 'Obra Importada', justificativa: 'Lida via PDF', executor: 'Obras', valor: 200000, situacao: 'Pendente' }); salvar(); renderEmendas(); renderDashboard(); alert("Dados importados com sucesso!"); }, 1000); }
         }
-
-        // --- AGENDA ---
         function renderCalendario() {
             const grid = document.getElementById('calendario-grid'); grid.innerHTML = '';
             for(let i = 1; i <= 31; i++) {
-                const diaStr = i.toString().padStart(2, '0'); const dataCompleta = `2026-03-${diaStr}`;
-                const eventosHoje = dados.agenda.filter(a => a.data === dataCompleta);
-                let eventosHTML = '';
-                eventosHoje.forEach(ev => {
-                    let clickAction = '';
-                    if(ev.telefone) {
-                        let msg = encodeURIComponent(`Olá ${ev.contato}, lembrando nosso evento: ${ev.local}. Descrição: ${ev.descricao}. Dia ${formatarDataBR(ev.data)} às ${ev.hora}.`);
-                        let link = `https://wa.me/${ev.telefone.replace(/\D/g, '')}?text=${msg}`;
-                        clickAction = `onclick="window.open('${link}', '_blank')"`;
-                    } else { clickAction = `onclick="alert('Evento: ${ev.local}\\nDesc: ${ev.descricao}')"`; }
-                    eventosHTML += `<div ${clickAction} class="event-chip shadow-sm mb-1 truncate" title="${ev.local} - ${ev.descricao}">${ev.hora} ${ev.local}</div>`;
-                });
-                const hoje = new Date().getDate() === i && new Date().getMonth() === 2 ? 'today' : ''; 
-                grid.innerHTML += `<div class="calendar-cell ${hoje}"><div class="calendar-date">${i}</div><div class="flex-1 overflow-y-auto no-scrollbar">${eventosHTML}</div></div>`;
+                const diaStr = i.toString().padStart(2, '0'); const dataCompleta = `2026-03-${diaStr}`; const eventosHoje = dados.agenda.filter(a => a.data === dataCompleta); let eventosHTML = '';
+                eventosHoje.forEach(ev => { let clickAction = ''; if(ev.telefone) { let msg = encodeURIComponent(`Olá ${ev.contato}, lembrando nosso evento: ${ev.local}. Descrição: ${ev.descricao}. Dia ${formatarDataBR(ev.data)} às ${ev.hora}.`); let link = `https://wa.me/${ev.telefone.replace(/\D/g, '')}?text=${msg}`; clickAction = `onclick="window.open('${link}', '_blank')"`; } else clickAction = `onclick="alert('Evento: ${ev.local}\\nDesc: ${ev.descricao}')"`; eventosHTML += `<div ${clickAction} class="event-chip shadow-sm mb-1 truncate" title="${ev.local} - ${ev.descricao}">${ev.hora} ${ev.local}</div>`; });
+                const hoje = new Date().getDate() === i && new Date().getMonth() === 2 ? 'today' : ''; grid.innerHTML += `<div class="calendar-cell ${hoje}"><div class="calendar-date">${i}</div><div class="flex-1 overflow-y-auto no-scrollbar">${eventosHTML}</div></div>`;
             }
         }
         function addAgenda() {
             const data = document.getElementById('agenda-data').value, hora = document.getElementById('agenda-hora').value, local = document.getElementById('agenda-local').value, descricao = document.getElementById('agenda-descricao').value, contato = document.getElementById('agenda-contato').value, telefone = document.getElementById('agenda-telefone').value;
-            if(data && local) {
-                dados.agenda.push({ id: Date.now(), data, hora, local, descricao, contato, telefone }); salvar();
-                ['agenda-data','agenda-hora','agenda-local','agenda-descricao','agenda-contato','agenda-telefone'].forEach(id => document.getElementById(id).value = '');
-                renderCalendario(); renderDashboard();
-            } else { alert("Data e Local são obrigatórios."); }
+            if(data && local) { dados.agenda.push({ id: Date.now(), data, hora, local, descricao, contato, telefone }); salvar(); ['agenda-data','agenda-hora','agenda-local','agenda-descricao','agenda-contato','agenda-telefone'].forEach(id => document.getElementById(id).value = ''); renderCalendario(); renderDashboard(); } else alert("Data e Local são obrigatórios.");
         }
-
-        // --- KANBAN ---
-        function adicionarColuna() {
-            const titulo = prompt("Digite o nome da nova etapa (ex: Revisão, Parado):");
-            if(titulo && titulo.trim() !== '') { dados.colunasKanban.push({ id: 'col_' + Date.now(), titulo }); salvar(); renderKanban(); }
-        }
-        function abrirModalDemanda() {
-            demandaEmEdicaoId = null; document.getElementById('modal-demanda-title').innerText = 'Nova Demanda'; document.getElementById('btn-salvar-demanda').innerText = 'Criar Demanda';
-            ['kanban-titulo','kanban-beneficiario','kanban-data-prazo'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('kanban-data-rec').value = new Date().toISOString().split('T')[0];
-            document.querySelectorAll('.resp-check').forEach(cb => cb.checked = false);
-            document.getElementById('modal-demanda').classList.remove('hidden');
-        }
+        function adicionarColuna() { const titulo = prompt("Digite o nome da nova etapa (ex: Revisão, Parado):"); if(titulo && titulo.trim() !== '') { dados.colunasKanban.push({ id: 'col_' + Date.now(), titulo }); salvar(); renderKanban(); } }
+        function abrirModalDemanda() { demandaEmEdicaoId = null; document.getElementById('modal-demanda-title').innerText = 'Nova Demanda'; document.getElementById('btn-salvar-demanda').innerText = 'Criar Demanda'; ['kanban-titulo','kanban-beneficiario','kanban-data-prazo'].forEach(id => document.getElementById(id).value = ''); document.getElementById('kanban-data-rec').value = new Date().toISOString().split('T')[0]; document.querySelectorAll('.resp-check').forEach(cb => cb.checked = false); document.getElementById('modal-demanda').classList.remove('hidden'); }
         function fecharModalDemanda() { document.getElementById('modal-demanda').classList.add('hidden'); }
-        function editarDemanda(id) {
-            demandaEmEdicaoId = id; const k = dados.kanban.find(d => d.id === id); if(!k) return;
-            document.getElementById('modal-demanda-title').innerText = 'Editar Demanda'; document.getElementById('btn-salvar-demanda').innerText = 'Salvar Alterações';
-            document.getElementById('kanban-titulo').value = k.texto; document.getElementById('kanban-beneficiario').value = k.beneficiario;
-            document.getElementById('kanban-area').value = k.area; document.getElementById('kanban-data-rec').value = k.dataRec; document.getElementById('kanban-data-prazo').value = k.dataPrazo;
-            document.querySelectorAll('.resp-check').forEach(cb => { cb.checked = k.responsaveis.includes(parseInt(cb.value)); });
-            document.getElementById('modal-demanda').classList.remove('hidden');
-        }
+        function editarDemanda(id) { demandaEmEdicaoId = id; const k = dados.kanban.find(d => d.id === id); if(!k) return; document.getElementById('modal-demanda-title').innerText = 'Editar Demanda'; document.getElementById('btn-salvar-demanda').innerText = 'Salvar Alterações'; document.getElementById('kanban-titulo').value = k.texto; document.getElementById('kanban-beneficiario').value = k.beneficiario; document.getElementById('kanban-area').value = k.area; document.getElementById('kanban-data-rec').value = k.dataRec; document.getElementById('kanban-data-prazo').value = k.dataPrazo; document.querySelectorAll('.resp-check').forEach(cb => { cb.checked = k.responsaveis.includes(parseInt(cb.value)); }); document.getElementById('modal-demanda').classList.remove('hidden'); }
         function salvarDemanda() {
-            const texto = document.getElementById('kanban-titulo').value, beneficiario = document.getElementById('kanban-beneficiario').value, area = document.getElementById('kanban-area').value, dataRec = document.getElementById('kanban-data-rec').value, dataPrazo = document.getElementById('kanban-data-prazo').value;
-            const checkboxes = document.querySelectorAll('.resp-check:checked'); let responsaveis = Array.from(checkboxes).map(cb => parseInt(cb.value));
-            if(texto && dataPrazo && responsaveis.length > 0) {
-                if(demandaEmEdicaoId) {
-                    const index = dados.kanban.findIndex(d => d.id === demandaEmEdicaoId);
-                    if(index > -1) dados.kanban[index] = { ...dados.kanban[index], texto, beneficiario, area, dataRec, dataPrazo, responsaveis };
-                } else {
-                    dados.kanban.push({ id: 'k' + Date.now(), texto, beneficiario, area, dataRec, dataPrazo, responsaveis, criador: usuarioLogado.id, status: dados.colunasKanban[0].id });
-                }
-                salvar(); fecharModalDemanda(); renderKanban(); renderDashboard();
-            } else { alert("Preencha Título, Prazo e selecione responsáveis."); }
+            const texto = document.getElementById('kanban-titulo').value, beneficiario = document.getElementById('kanban-beneficiario').value, area = document.getElementById('kanban-area').value, dataRec = document.getElementById('kanban-data-rec').value, dataPrazo = document.getElementById('kanban-data-prazo').value; const checkboxes = document.querySelectorAll('.resp-check:checked'); let responsaveis = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            if(texto && dataPrazo && responsaveis.length > 0) { if(demandaEmEdicaoId) { const index = dados.kanban.findIndex(d => d.id === demandaEmEdicaoId); if(index > -1) dados.kanban[index] = { ...dados.kanban[index], texto, beneficiario, area, dataRec, dataPrazo, responsaveis }; } else dados.kanban.push({ id: 'k' + Date.now(), texto, beneficiario, area, dataRec, dataPrazo, responsaveis, criador: usuarioLogado.id, status: dados.colunasKanban[0].id }); salvar(); fecharModalDemanda(); renderKanban(); renderDashboard(); } else alert("Preencha Título, Prazo e selecione responsáveis.");
         }
-        function deleteDemanda(id) {
-            if(confirm("Deseja apagar esta demanda?")) { dados.kanban = dados.kanban.filter(k => k.id !== id); salvar(); renderKanban(); renderDashboard(); }
-        }
+        function deleteDemanda(id) { if(confirm("Deseja apagar esta demanda?")) { dados.kanban = dados.kanban.filter(k => k.id !== id); salvar(); renderKanban(); renderDashboard(); } }
         function renderKanban() {
             const container = document.getElementById('kanban-columns-container'); container.innerHTML = '';
             dados.colunasKanban.forEach((col, index) => {
@@ -1095,30 +1063,24 @@
                 let avataresHTML = ''; k.responsaveis.forEach(userId => { const user = usuarios.find(u => u.id === userId); if(user) avataresHTML += `<div class="w-7 h-7 rounded-full ${user.cor} text-white flex items-center justify-center text-[10px] font-bold border-2 border-white -ml-2 first:ml-0 shadow-sm" title="${user.nome}">${user.nome.substring(0,2).toUpperCase()}</div>`; });
                 const criador = usuarios.find(u => u.id === k.criador); const nomeCriador = criador ? criador.nome : 'Sistema';
                 let corArea = 'bg-gray-100 text-gray-700'; if(k.area === 'Saúde') corArea = 'bg-red-100 text-red-700'; if(k.area === 'Comunicação') corArea = 'bg-purple-100 text-purple-700'; if(k.area === 'Jurídico') corArea = 'bg-blue-100 text-blue-700';
-                const isMinhaTarefa = usuarioLogado && k.responsaveis.includes(usuarioLogado.id);
-                const cardBorder = isMinhaTarefa ? 'border-ios-blue border-2 bg-blue-50 shadow-md shadow-blue-500/10' : 'border-gray-100 bg-white shadow-apple';
+                const isMinhaTarefa = usuarioLogado && k.responsaveis.includes(usuarioLogado.id); const cardBorder = isMinhaTarefa ? 'border-ios-blue border-2 bg-blue-50 shadow-md shadow-blue-500/10' : 'border-gray-100 bg-white shadow-apple';
                 const cardHTML = `<div id="${k.id}" class="${cardBorder} p-4 rounded-2xl cursor-grab active:cursor-grabbing flex flex-col gap-3" draggable="true" ondragstart="drag(event)"><div class="flex justify-between items-start"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${corArea}">${k.area}</span><div class="flex gap-2"><button onclick="editarDemanda('${k.id}')" class="text-gray-300 hover:text-ios-blue transition-colors"><i class="ph-bold ph-pencil-simple text-sm"></i></button><button onclick="deleteDemanda('${k.id}')" class="text-gray-300 hover:text-red-500 transition-colors"><i class="ph-bold ph-trash text-sm"></i></button></div></div><p class="font-bold text-gray-900 leading-snug">${k.texto}</p><div class="bg-white/60 p-2 rounded-lg border border-gray-100 text-[11px] text-gray-600 space-y-1"><p><strong>Ben:</strong> ${k.beneficiario || '-'}</p><p><strong>Rec em:</strong> ${formatarDataBR(k.dataRec)} por ${nomeCriador}</p></div><div class="flex justify-between items-center mt-1 pt-3 border-t border-gray-100"><div class="flex text-xs font-bold ${new Date(k.dataPrazo) < new Date() && k.status !== dados.colunasKanban[dados.colunasKanban.length-1].id ? 'text-red-500' : 'text-gray-500'}"><i class="ph-bold ph-clock mr-1 text-sm"></i> ${formatarDataBR(k.dataPrazo)}</div><div class="flex pl-2">${avataresHTML}</div></div></div>`;
                 const colElement = document.getElementById(`kb-${k.status}`); if(colElement) colElement.innerHTML += cardHTML;
             });
         }
         function allowDrop(ev) { ev.preventDefault(); }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        function drag(ev) { ev.dataTransfer.setData("text/plain", "KANBAN:" + ev.target.id); }
         function drop(ev) {
-            ev.preventDefault(); const id = ev.dataTransfer.getData("text"); let col = ev.target;
+            ev.preventDefault(); const data = ev.dataTransfer.getData("text/plain"); if(!data.startsWith("KANBAN:")) return; const id = data.split(":")[1]; let col = ev.target;
             while(!col.classList.contains('kanban-column')) { col = col.parentElement; if(!col) return; }
-            const index = dados.kanban.findIndex(k => k.id === id);
-            if(index > -1) { dados.kanban[index].status = col.id.replace('kb-', ''); salvar(); renderKanban(); renderDashboard(); }
+            const index = dados.kanban.findIndex(k => k.id === id); if(index > -1) { dados.kanban[index].status = col.id.replace('kb-', ''); salvar(); renderKanban(); renderDashboard(); }
         }
 
-        // --- NOTAS & DASHBOARD ---
         function renderNotas() {
             const list = document.getElementById('notas-list'); list.innerHTML = '';
             dados.notas.forEach(n => { list.innerHTML += `<div class="bg-yellow-200/40 p-5 rounded-3xl relative shadow-sm border border-yellow-200"><p class="text-[16px] font-medium text-yellow-900 pr-6 leading-snug">${n.texto}</p><button onclick="deleteNota(${n.id})" class="absolute top-4 right-4 text-yellow-600/50 hover:text-red-500"><i class="ph-fill ph-x-circle text-2xl"></i></button></div>`; });
         }
-        function addNota() {
-            const texto = document.getElementById('nova-nota').value;
-            if(texto) { dados.notas.unshift({ id: Date.now(), texto }); salvar(); document.getElementById('nova-nota').value = ''; renderNotas(); renderDashboard(); }
-        }
+        function addNota() { const texto = document.getElementById('nova-nota').value; if(texto) { dados.notas.unshift({ id: Date.now(), texto }); salvar(); document.getElementById('nova-nota').value = ''; renderNotas(); renderDashboard(); } }
         function deleteNota(id) { dados.notas = dados.notas.filter(n => n.id !== id); salvar(); renderNotas(); renderDashboard(); }
 
         function renderDashboard() {
@@ -1129,7 +1091,7 @@
             const notasPreview = document.getElementById('dash-notas-preview'); if(dados.notas.length > 0) notasPreview.innerText = dados.notas[0].texto; else notasPreview.innerText = "Nenhuma nota recente.";
         }
 
-        function renderAll() { renderDashboard(); renderEmendas(); renderPropostas(); renderLiderancas(); renderCalendario(); renderKanban(); renderNotas(); }
+        function renderAll() { renderDashboard(); renderEmendas(); renderPropostas(); renderLiderancas(); renderCalendario(); renderKanban(); renderNotas(); renderSaude(); }
     </script>
 </body>
 </html>
