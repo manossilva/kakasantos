@@ -1,480 +1,741 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kaka Santos | O Trabalho Continua</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MandatoApp - Kaká Santos</title>
     
-    <!-- Bibliotecas -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Chart.js para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Configuração Visual iOS/Apple -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        kaka: {
-                            blue: '#0044CC', // Azul Royal Vibrante
-                            dark: '#002266', // Azul Marinho
-                            yellow: '#FFD700', // Amarelo Ouro
-                            light: '#F8FAFC'
+                        ios: {
+                            bg: '#F2F2F7',
+                            card: '#FFFFFF',
+                            blue: '#007AFF',
+                            green: '#34C759',
+                            red: '#FF3B30',
+                            orange: '#FF9500',
+                            purple: '#AF52DE',
+                            gray: '#8E8E93',
+                            grayBg: '#E5E5EA',
+                            darkBlue: '#0040DD'
                         }
                     },
                     fontFamily: {
-                        sans: ['Open Sans', 'sans-serif'],
-                        display: ['Montserrat', 'sans-serif'],
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'apple': '0 4px 12px rgba(0,0,0,0.05)',
+                        'apple-lg': '0 12px 32px rgba(0,0,0,0.08)',
+                        'apple-glow': '0 0 15px rgba(0, 122, 255, 0.3)'
                     }
                 }
             }
         }
     </script>
-
+    
     <style>
-        /* Estilos Personalizados */
-        body { font-family: 'Open Sans', sans-serif; }
-        h1, h2, h3, h4, h5, .font-display { font-family: 'Montserrat', sans-serif; }
-        
-        /* Padrão de fundo geométrico */
-        .bg-pattern {
-            background-image: radial-gradient(#0044CC 1px, transparent 1px);
-            background-size: 24px 24px;
-            opacity: 0.05;
+        body {
+            background-color: #F2F2F7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Card Hover Effect - Levantar levemente */
-        .hover-lift {
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-        }
-        .hover-lift:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 68, 204, 0.15), 0 10px 10px -5px rgba(0, 68, 204, 0.1);
-        }
-
-        /* Scrollbar personalizada */
+        /* Scrollbar customizada suave */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #0044CC; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #002266; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C7C7CC; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8E8E93; }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Classes Utilitárias */
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .ios-input {
+            width: 100%; background-color: #F2F2F7; border: 1px solid transparent; border-radius: 12px;
+            padding: 12px 16px; font-size: 15px; outline: none; transition: all 0.2s;
+        }
+        .ios-input:focus { background-color: #fff; border-color: #007AFF; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
+
+        .ios-btn {
+            transition: transform 0.1s;
+        }
+        .ios-btn:active { transform: scale(0.97); }
+
+        /* Estilo do Mapa de Calor (Simulado com Grid) */
+        .heatmap-cell {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .heatmap-cell:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        /* Desktop vs Mobile Layout Fixes */
+        @media (min-width: 768px) {
+            #main-nav { display: none !important; } /* Esconde menu inferior no desktop */
+            #sidebar { display: flex !important; } /* Mostra sidebar no desktop */
+            main { margin-left: 250px; padding: 40px; max-width: 1600px; } /* Ajuste de conteúdo */
+            .ios-container { max-width: 1200px; margin: 0 auto; } /* Centraliza cards grandes */
+        }
+        @media (max-width: 767px) {
+            #sidebar { display: none !important; }
+            main { margin-left: 0; padding-bottom: 100px; }
+        }
+
+        .tab-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tab-btn { color: #666; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased overflow-x-hidden">
+<body class="text-gray-900 h-screen flex overflow-hidden bg-[#F2F2F7]">
 
-    <!-- Fundo Padrão -->
-    <div class="fixed inset-0 bg-pattern pointer-events-none z-0"></div>
-
-    <!-- ==========================================
-         NAVBAR (Minimalista e Sólida)
-         ========================================== -->
-    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-1 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-                    <div class="w-10 h-10 bg-kaka-blue text-kaka-yellow flex items-center justify-center font-display font-black text-xl rounded-lg transform -skew-x-6">
-                        K
-                    </div>
-                    <div class="flex flex-col leading-none ml-2">
-                        <span class="font-display font-black text-xl text-kaka-blue tracking-tighter uppercase">Kaka Santos</span>
-                        <span class="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase">Deputado Federal</span>
-                    </div>
-                </div>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#inicio" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Início</a>
-                    <a href="#atuacao" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Atuação</a>
-                    <a href="#verdade" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Verdade</a>
-                    <a href="#bio" class="text-sm font-bold text-slate-600 hover:text-kaka-blue uppercase tracking-wider transition-colors">Trajetória</a>
-                    
-                    <a href="#contato" class="bg-kaka-yellow text-kaka-dark px-6 py-2.5 rounded-lg font-black uppercase text-xs tracking-widest hover:bg-yellow-300 transition-colors shadow-lg shadow-yellow-400/30 transform hover:scale-105 duration-200">
-                        Fale Comigo
-                    </a>
-                </div>
-
-                <!-- Mobile Button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobileMenuBtn" class="text-kaka-blue p-2">
-                        <i data-lucide="menu" class="w-8 h-8"></i>
-                    </button>
-                </div>
-            </div>
+    <!-- ==================== TELA DE LOGIN ==================== -->
+    <section id="view-login" class="flex flex-col items-center justify-center bg-white z-50 fixed inset-0">
+        <div class="w-24 h-24 bg-gradient-to-br from-ios-blue to-ios-darkBlue rounded-3xl shadow-apple-lg flex items-center justify-center text-white mb-8">
+            <i class="ph-fill ph-buildings text-5xl"></i>
         </div>
-    </nav>
+        <h1 class="text-3xl font-bold tracking-tight mb-2">MandatoApp</h1>
+        <p class="text-ios-gray font-medium mb-10">Gestão Política Inteligente</p>
 
-    <!-- Mobile Menu Overlay -->
-    <div id="mobileMenu" class="fixed inset-0 z-[60] bg-kaka-blue transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center gap-8">
-        <button id="closeMenuBtn" class="absolute top-6 right-6 text-white p-2">
-            <i data-lucide="x" class="w-10 h-10"></i>
-        </button>
-        <a href="#inicio" class="mobile-link text-3xl font-display font-black text-white hover:text-kaka-yellow">INÍCIO</a>
-        <a href="#atuacao" class="mobile-link text-3xl font-display font-black text-white hover:text-kaka-yellow">ATUAÇÃO</a>
-        <a href="#verdade" class="mobile-link text-3xl font-display font-black text-white hover:text-kaka-yellow">A VERDADE</a>
-        <a href="#contato" class="mobile-link text-3xl font-display font-black text-kaka-yellow border-2 border-kaka-yellow px-8 py-2 rounded-xl">CONTATO</a>
-    </div>
-
-    <!-- ==========================================
-         HERO SECTION (Estilo Bento Grid - Mosaico)
-         ========================================== -->
-    <section id="inicio" class="pt-28 pb-12 px-4 sm:px-6 relative z-10 max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row items-end justify-between mb-8 gap-4">
+        <div class="w-full max-w-sm bg-white p-6 rounded-3xl shadow-apple border border-gray-100 space-y-4">
             <div>
-                <span class="text-kaka-blue font-bold text-xs uppercase tracking-[0.2em] bg-blue-100 px-2 py-1 rounded mb-2 inline-block">Portal da Transparência</span>
-                <h1 class="text-4xl sm:text-6xl font-display font-black text-slate-900 leading-none">
-                    O BRASIL QUE <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-kaka-blue to-blue-400">SERGIPE PRECISA.</span>
-                </h1>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">E-mail</label>
+                <input type="email" id="login-email" class="ios-input" value="ramon@kaka.com">
             </div>
-            <div class="hidden md:flex gap-2">
-                <button onclick="scrollNews(-1)" class="p-3 border border-slate-200 rounded-full hover:bg-kaka-blue hover:text-white transition-colors"><i data-lucide="arrow-left"></i></button>
-                <button onclick="scrollNews(1)" class="p-3 border border-slate-200 rounded-full hover:bg-kaka-blue hover:text-white transition-colors"><i data-lucide="arrow-right"></i></button>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Senha</label>
+                <input type="password" id="login-senha" class="ios-input" value="123">
             </div>
-        </div>
-
-        <!-- Mosaico Principal (Grid Dinâmico) -->
-        <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-[600px]" id="heroGrid">
-            <!-- Preenchido via JS -->
-        </div>
-    </section>
-
-    <!-- ==========================================
-         FAIXA DE NÚMEROS (Ticker)
-         ========================================== -->
-    <section class="bg-kaka-blue text-white py-12 -mx-4 sm:mx-0 sm:rounded-3xl relative overflow-hidden shadow-2xl shadow-blue-900/20 max-w-[98%] mx-auto">
-        <div class="absolute top-0 right-0 p-12 opacity-10">
-            <i data-lucide="activity" class="w-64 h-64"></i>
-        </div>
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
-            <div class="space-y-2">
-                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="15">0</h3>
-                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">Milhões em Emendas</p>
-            </div>
-            <div class="space-y-2">
-                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="24">0</h3>
-                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">Municípios Atendidos</p>
-            </div>
-            <div class="space-y-2">
-                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="120">0</h3>
-                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">Projetos de Lei</p>
-            </div>
-            <div class="space-y-2">
-                <h3 class="text-4xl md:text-5xl font-display font-black text-kaka-yellow counter" data-target="100">0</h3>
-                <p class="text-xs uppercase tracking-widest font-bold text-blue-200">% Presença Plenário</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==========================================
-         FILTRO DE ATUAÇÃO (Abas Modernas)
-         ========================================== -->
-    <section id="atuacao" class="py-20 max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 border-b border-slate-200 pb-4">
-            <h2 class="text-3xl font-display font-black text-slate-900 uppercase tracking-tight">Notícias do <span class="text-kaka-blue">Mandato</span></h2>
-            
-            <!-- Filtros -->
-            <div class="flex gap-6 overflow-x-auto no-scrollbar mt-4 md:mt-0" id="cityFilters">
-                <!-- Botões inseridos via JS -->
-            </div>
-        </div>
-
-        <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Cards inseridos via JS -->
-        </div>
-
-        <div class="mt-12 text-center">
-            <button class="inline-flex items-center gap-2 text-kaka-blue font-black uppercase tracking-widest text-xs border-b-2 border-kaka-yellow pb-1 hover:text-kaka-dark hover:border-kaka-blue transition-all">
-                Ver todo o arquivo <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <button onclick="fazerLogin()" class="w-full bg-ios-blue text-white py-3.5 rounded-xl font-bold text-[16px] ios-btn shadow-lg shadow-blue-500/30">
+                Entrar
             </button>
         </div>
+        <p class="mt-8 text-xs text-gray-400">Teste: ramon@kaka.com (Senha: 123)</p>
     </section>
 
-    <!-- ==========================================
-         SEÇÃO VERDADE (Estilo "Fact Check")
-         ========================================== -->
-    <section id="verdade" class="py-20 bg-slate-900 text-white relative overflow-hidden">
-        <!-- Background decorative -->
-        <div class="absolute -right-20 top-20 w-96 h-96 bg-kaka-blue rounded-full blur-[120px] opacity-20"></div>
-        <div class="absolute -left-20 bottom-20 w-96 h-96 bg-kaka-yellow rounded-full blur-[120px] opacity-10"></div>
-
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-            <div class="text-center mb-16">
-                <span class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">Combate à Desinformação</span>
-                <h2 class="text-4xl md:text-5xl font-display font-black mt-4 uppercase">Gabinete da <span class="text-kaka-yellow">Verdade</span></h2>
-                <p class="text-slate-400 mt-4 max-w-2xl mx-auto">Contra fatos não há argumentos. Confira as checagens oficiais.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="fakeNewsContainer">
-                <!-- Cards inseridos via JS -->
+    <!-- ==================== SIDEBAR (DESKTOP) ==================== -->
+    <aside id="sidebar" class="hidden w-64 bg-white/80 backdrop-blur-xl h-full fixed left-0 top-0 border-r border-gray-200 flex-col p-6 z-40">
+        <div class="flex items-center gap-3 mb-10 px-2">
+            <div class="w-10 h-10 rounded-xl bg-ios-blue text-white flex items-center justify-center font-bold shadow-md">KS</div>
+            <div>
+                <h1 class="font-bold text-lg leading-none">Kaká Santos</h1>
+                <p class="text-xs text-gray-500">Gestão de Mandato</p>
             </div>
         </div>
-    </section>
 
-    <!-- ==========================================
-         CONTATO (Newsletter Style)
-         ========================================== -->
-    <section id="contato" class="py-20 px-4 sm:px-6">
-        <div class="max-w-5xl mx-auto bg-kaka-yellow rounded-[2rem] p-8 md:p-16 relative overflow-hidden shadow-2xl">
-            <div class="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-            
-            <div class="relative z-10 flex flex-col md:flex-row items-center gap-12">
-                <div class="flex-1 text-center md:text-left">
-                    <h2 class="text-4xl font-display font-black text-kaka-dark mb-4 uppercase leading-none">Vem com a gente!</h2>
-                    <p class="text-kaka-dark/80 font-medium mb-8">Receba as novidades do mandato direto no seu WhatsApp. Sem spam, apenas trabalho.</p>
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-center gap-3 text-kaka-dark font-bold">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-kaka-blue"><i data-lucide="phone"></i></div>
-                            <span>(79) 99999-9999</span>
+        <nav class="space-y-2 flex-1">
+            <button onclick="switchTab('dashboard')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="dashboard">
+                <i class="ph ph-house text-xl"></i> Visão Geral
+            </button>
+            <button onclick="switchTab('emendas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="emendas">
+                <i class="ph ph-currency-circle-dollar text-xl"></i> Emendas
+            </button>
+            <button onclick="switchTab('agenda')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="agenda">
+                <i class="ph ph-calendar-blank text-xl"></i> Agenda
+            </button>
+            <button onclick="switchTab('kanban')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="kanban">
+                <i class="ph ph-kanban text-xl"></i> Demandas
+            </button>
+            <button onclick="switchTab('notas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="notas">
+                <i class="ph ph-notebook text-xl"></i> Anotações
+            </button>
+        </nav>
+
+        <div class="border-t border-gray-200 pt-4 mt-4">
+            <div class="flex items-center gap-3 px-2 cursor-pointer hover:opacity-70" onclick="fazerLogout()">
+                <div id="desktop-avatar" class="w-8 h-8 rounded-full bg-ios-grayBg flex items-center justify-center text-xs font-bold text-gray-600">US</div>
+                <div class="flex-1">
+                    <p id="desktop-username" class="text-sm font-medium text-gray-800">Usuário</p>
+                    <p class="text-xs text-red-500">Sair</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="flex-1 h-full overflow-y-auto w-full hidden" id="main-container">
+        
+        <!-- HEADER MOBILE (Apenas Mobile) -->
+        <header class="md:hidden flex justify-between items-center mb-6 pt-safe-top px-2">
+            <div>
+                <p id="header-date" class="text-xs font-bold text-ios-gray uppercase tracking-wider mb-1"></p>
+                <h1 id="mobile-title" class="font-bold text-2xl tracking-tight text-gray-900">Visão Geral</h1>
+            </div>
+            <div id="mobile-avatar" onclick="fazerLogout()" class="w-9 h-9 rounded-full bg-ios-blue text-white flex items-center justify-center font-bold shadow-sm text-sm">US</div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section id="view-dashboard" class="page ios-container">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Card Principal -->
+                <div class="md:col-span-2 bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 text-white shadow-apple-lg relative overflow-hidden flex flex-col justify-between h-64">
+                    <div class="absolute right-0 bottom-0 opacity-10"><i class="ph-fill ph-chart-line-up text-9xl"></i></div>
+                    <div>
+                        <h3 class="font-medium text-gray-300 mb-1">Total em Emendas Investidas</h3>
+                        <p class="text-5xl font-bold tracking-tight" id="dash-total-emendas">R$ 0,00</p>
+                    </div>
+                    <div class="flex gap-4 mt-4 relative z-10">
+                        <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10">
+                            <span class="block text-xs text-gray-300">Saúde</span>
+                            <span class="font-semibold" id="dash-saude-val">R$ 0</span>
                         </div>
-                        <div class="flex items-center gap-3 text-kaka-dark font-bold">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-kaka-blue"><i data-lucide="mail"></i></div>
-                            <span>gabinete@kakasantos.com.br</span>
+                        <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10">
+                            <span class="block text-xs text-gray-300">Educação</span>
+                            <span class="font-semibold" id="dash-educ-val">R$ 0</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex-1 w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
-                    <form class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-1">Nome</label>
-                            <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-kaka-blue focus:ring-1 focus:ring-kaka-blue transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-1">WhatsApp</label>
-                            <input type="tel" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-kaka-blue focus:ring-1 focus:ring-kaka-blue transition-all">
-                        </div>
-                        <button class="w-full bg-kaka-blue text-white py-4 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20 active:translate-y-1">
-                            Cadastrar
-                        </button>
-                    </form>
+                <!-- Widgets Laterais -->
+                <div class="grid grid-cols-2 md:grid-cols-1 gap-4">
+                    <div class="bg-white rounded-3xl p-6 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('kanban')">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-ios-purple mb-2"><i class="ph-fill ph-kanban text-2xl"></i></div>
+                        <h4 class="font-bold text-lg text-gray-800">Demandas</h4>
+                        <p class="text-sm text-gray-500" id="dash-demandas-count">0 pendentes</p>
+                    </div>
+                    <div class="bg-white rounded-3xl p-6 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('agenda')">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-ios-blue mb-2"><i class="ph-fill ph-calendar-check text-2xl"></i></div>
+                        <h4 class="font-bold text-lg text-gray-800">Agenda Hoje</h4>
+                        <p class="text-sm text-gray-500" id="dash-agenda-count">0 visitas</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="bg-white border-t border-slate-200 py-12 text-center">
-        <div class="flex justify-center items-center gap-2 mb-4 opacity-50">
-             <div class="w-6 h-6 bg-kaka-blue text-white flex items-center justify-center font-display font-black text-xs rounded transform -skew-x-6">K</div>
-             <span class="font-display font-black text-slate-900 uppercase">Kaka Santos</span>
-        </div>
-        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Política com Propósito • Sergipe 2026</p>
-    </footer>
+        <!-- EMENDAS (COMPLEXO) -->
+        <section id="view-emendas" class="page ios-container">
+            <!-- Header e Filtros -->
+            <div class="bg-white rounded-3xl shadow-apple p-1 mb-6 flex flex-col md:flex-row justify-between items-center sticky top-0 z-20">
+                <div class="p-2 w-full md:w-auto">
+                    <select id="filtro-ano" onchange="renderEmendas()" class="bg-gray-100 text-gray-800 font-bold rounded-xl px-4 py-2 outline-none border-none cursor-pointer w-full md:w-48 text-center">
+                        <option value="todos">Todos os Anos</option>
+                        <option value="2026" selected>2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+                
+                <div class="flex bg-gray-100 p-1 rounded-xl mx-2 w-full md:w-auto overflow-x-auto">
+                    <button onclick="mudarTipoEmenda('impositiva')" class="tab-btn active px-4 py-2 rounded-lg text-sm font-semibold flex-1 md:flex-none whitespace-nowrap" id="tab-impositiva">Impositivas</button>
+                    <button onclick="mudarTipoEmenda('especial')" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold flex-1 md:flex-none whitespace-nowrap" id="tab-especial">Especiais</button>
+                    <button onclick="mudarTipoEmenda('nao-impositiva')" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold flex-1 md:flex-none whitespace-nowrap" id="tab-nao-impositiva">Não Impositivas</button>
+                </div>
 
-    <!-- ==========================================
-         JAVASCRIPT
-         ========================================== -->
+                <div class="p-2 w-full md:w-auto">
+                    <label class="bg-ios-blue text-white px-4 py-2 rounded-xl text-sm font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-blue-600 transition-colors">
+                        <i class="ph-bold ph-file-pdf"></i> Subir PDF (Ano)
+                        <input type="file" class="hidden" onchange="simularUploadPDF(this)">
+                    </label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Coluna Esquerda: Mapa e Resumo -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Mapa Visual de Sergipe (Heatmap Abstrato) -->
+                    <div class="bg-white p-6 rounded-3xl shadow-apple">
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="ph-fill ph-map-trifold text-ios-blue"></i> Mapa de Distribuição (Sergipe)
+                        </h3>
+                        <p class="text-xs text-gray-500 mb-4">Intensidade de cor indica maior investimento. Clique na cidade para detalhes.</p>
+                        
+                        <!-- Grid que simula o mapa -->
+                        <div id="mapa-sergipe" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Detalhes da Seleção -->
+                    <div id="detalhe-cidade-container" class="hidden bg-white p-6 rounded-3xl shadow-apple border-l-4 border-ios-blue animate-pulse">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800" id="det-cidade-nome">Cidade</h3>
+                                <p class="text-sm text-gray-500">Resumo de Investimentos</p>
+                            </div>
+                            <button onclick="fecharDetalhes()" class="text-gray-400 hover:text-red-500"><i class="ph-bold ph-x"></i></button>
+                        </div>
+
+                        <!-- Filtro Tobias Barreto -->
+                        <div id="tobias-filter-area" class="hidden mb-4 bg-yellow-50 p-3 rounded-xl border border-yellow-200">
+                            <label class="text-xs font-bold text-yellow-700 uppercase">Filtrar por Localidade (Tobias Barreto)</label>
+                            <select id="filtro-bairro-tobias" onchange="filtrarBairroTobias()" class="w-full mt-1 bg-white border border-yellow-300 rounded-lg p-2 text-sm">
+                                <option value="todos">Todos os Bairros/Povoados</option>
+                                <option value="Centro">Centro</option>
+                                <option value="Povoado Barrinha">Povoado Barrinha</option>
+                                <option value="Povoado Vila de Samara">Povoado Vila de Samara</option>
+                                <option value="Bairro Santa Rita">Bairro Santa Rita</option>
+                            </select>
+                        </div>
+
+                        <!-- Cards de Dados da Cidade -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-xl">
+                                <p class="text-xs text-gray-500">Valor Total</p>
+                                <p class="text-xl font-bold text-ios-green" id="det-cidade-valor">R$ 0,00</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-xl">
+                                <p class="text-xs text-gray-500">Área Principal</p>
+                                <p class="text-lg font-bold text-gray-800" id="det-cidade-area">Saúde</p>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-gray-500 uppercase bg-gray-50">
+                                    <tr>
+                                        <th class="p-2 rounded-l-lg">Objeto</th>
+                                        <th class="p-2">Área</th>
+                                        <th class="p-2">Executor</th>
+                                        <th class="p-2 rounded-r-lg text-right">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="det-tabela-body" class="font-medium text-gray-700">
+                                    <!-- Preenchido JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Lista e Estatísticas -->
+                <div class="space-y-6">
+                    <!-- Resumo por Área -->
+                    <div class="bg-white p-6 rounded-3xl shadow-apple">
+                        <h3 class="font-bold text-gray-800 mb-4">Divisão por Área</h3>
+                        <div class="space-y-3" id="lista-areas-geral">
+                            <!-- Barras de Progresso -->
+                        </div>
+                    </div>
+
+                    <!-- Lista de Cidades (Ranking) -->
+                    <div class="bg-white p-6 rounded-3xl shadow-apple max-h-[500px] overflow-y-auto">
+                        <h3 class="font-bold text-gray-800 mb-4">Cidades Beneficiadas</h3>
+                        <div class="space-y-2" id="lista-ranking-cidades">
+                            <!-- Lista JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AGENDA -->
+        <section id="view-agenda" class="page ios-container">
+            <h2 class="text-2xl font-bold mb-6">Agenda</h2>
+            <div class="bg-white rounded-3xl shadow-apple p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <input type="date" id="agenda-data" class="ios-input">
+                    <input type="time" id="agenda-hora" class="ios-input">
+                    <input type="text" id="agenda-local" placeholder="Local" class="ios-input md:col-span-2">
+                    <button onclick="addAgenda()" class="bg-ios-blue text-white rounded-xl font-bold ios-btn">Agendar</button>
+                </div>
+            </div>
+            <div id="agenda-list" class="space-y-3"></div>
+        </section>
+
+        <!-- KANBAN -->
+        <section id="view-kanban" class="page h-full flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Demandas</h2>
+                <button onclick="document.getElementById('modal-demanda').classList.remove('hidden')" class="bg-ios-purple text-white px-4 py-2 rounded-xl font-bold ios-btn">+ Nova Demanda</button>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-6 flex-1 overflow-x-auto pb-4">
+                <div class="flex-1 min-w-[300px] bg-gray-100 rounded-3xl p-4 flex flex-col">
+                    <h3 class="font-bold text-gray-700 mb-4 px-2">A Fazer</h3>
+                    <div id="kb-todo" class="kanban-column flex-1 space-y-3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+                <div class="flex-1 min-w-[300px] bg-orange-50 rounded-3xl p-4 flex flex-col border border-orange-100">
+                    <h3 class="font-bold text-orange-700 mb-4 px-2">Fazendo</h3>
+                    <div id="kb-doing" class="kanban-column flex-1 space-y-3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+                <div class="flex-1 min-w-[300px] bg-green-50 rounded-3xl p-4 flex flex-col border border-green-100">
+                    <h3 class="font-bold text-green-700 mb-4 px-2">Concluído</h3>
+                    <div id="kb-done" class="kanban-column flex-1 space-y-3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOTAS -->
+        <section id="view-notas" class="page ios-container">
+            <h2 class="text-2xl font-bold mb-6">Anotações</h2>
+            <div class="bg-yellow-100 p-6 rounded-3xl shadow-apple mb-6 relative">
+                <textarea id="nova-nota" rows="2" class="w-full bg-transparent border-none outline-none text-lg text-yellow-900 placeholder-yellow-700/50 resize-none" placeholder="Digite uma nota rápida..."></textarea>
+                <div class="text-right mt-2">
+                    <button onclick="addNota()" class="bg-yellow-400 text-yellow-900 px-6 py-2 rounded-xl font-bold ios-btn">Salvar</button>
+                </div>
+            </div>
+            <div id="notas-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+    </main>
+
+    <!-- NAVEGAÇÃO MOBILE (BOTTOM) -->
+    <nav id="mobile-nav" class="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-200 flex justify-around items-center pb-safe pt-2 px-2 z-50 h-20">
+        <button onclick="switchTab('dashboard')" class="nav-btn text-ios-blue flex flex-col items-center p-2 w-1/5" data-target="dashboard">
+            <i class="ph-fill ph-house text-2xl mb-1"></i><span class="text-[10px] font-medium">Início</span>
+        </button>
+        <button onclick="switchTab('emendas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="emendas">
+            <i class="ph ph-currency-circle-dollar text-2xl mb-1"></i><span class="text-[10px] font-medium">Emendas</span>
+        </button>
+        <button onclick="switchTab('agenda')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="agenda">
+            <i class="ph ph-calendar-blank text-2xl mb-1"></i><span class="text-[10px] font-medium">Agenda</span>
+        </button>
+        <button onclick="switchTab('kanban')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="kanban">
+            <i class="ph ph-kanban text-2xl mb-1"></i><span class="text-[10px] font-medium">Demandas</span>
+        </button>
+        <button onclick="switchTab('notas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="notas">
+            <i class="ph ph-notebook text-2xl mb-1"></i><span class="text-[10px] font-medium">Notas</span>
+        </button>
+    </nav>
+
+    <!-- MODAL NOVA DEMANDA (KANBAN) -->
+    <div id="modal-demanda" class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <h3 class="text-xl font-bold mb-4">Nova Demanda</h3>
+            <input type="text" id="kanban-titulo" placeholder="Título..." class="ios-input mb-3">
+            <div class="flex gap-2 mb-3">
+                <input type="date" id="kanban-data" class="ios-input w-1/2">
+                <select id="kanban-area" class="ios-input w-1/2 bg-gray-50">
+                    <option value="Gabinete">Gabinete</option>
+                    <option value="Comunicação">Comunicação</option>
+                    <option value="Jurídico">Jurídico</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <p class="text-sm font-bold text-gray-500 mb-2">Responsáveis:</p>
+                <div id="kanban-responsaveis-list" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('modal-demanda').classList.add('hidden')" class="flex-1 py-3 text-gray-500 font-bold">Cancelar</button>
+                <button onclick="addDemanda()" class="flex-1 bg-ios-purple text-white rounded-xl font-bold">Criar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS LÓGICA -->
     <script>
-        // DADOS (EDITÁVEIS)
-        const principalNews = [
-            {
-                id: 1,
-                title: "RECURSOS GARANTIDOS PARA NOVA ORLA",
-                category: "Infraestrutura",
-                img: "https://images.unsplash.com/photo-1498889444388-e67ea62c464b?q=80&w=2000&auto=format&fit=crop",
-                size: "big" // Ocupa espaço maior
-            },
-            {
-                id: 2,
-                title: "Saúde Digital em Expansão",
-                category: "Inovação",
-                img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop",
-                size: "small"
-            },
-            {
-                id: 3,
-                title: "Educação em Tempo Integral",
-                category: "Educação",
-                img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2000&auto=format&fit=crop",
-                size: "small"
-            }
+        // ================= DADOS =================
+        const usuarios = [
+            { id: 1, nome: 'Ramon', email: 'ramon@kaka.com', senha: '123', cor: 'bg-purple-500' },
+            { id: 2, nome: 'Diogo', email: 'diogo@kaka.com', senha: '123', cor: 'bg-blue-500' },
+            { id: 3, nome: 'Kaká', email: 'kaka@kaka.com', senha: '123', cor: 'bg-gray-800' }
         ];
 
-        const allNews = [
-            { title: "Kaka Santos recebe prefeitos", city: "Aracaju", date: "02 Fev", img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1000&auto=format&fit=crop" },
-            { title: "Visita técnica às obras da BR", city: "Interior", date: "30 Jan", img: "https://images.unsplash.com/photo-1590486803833-ffc6f98629e7?q=80&w=1000&auto=format&fit=crop" },
-            { title: "Entrega de Tratores", city: "Lagarto", date: "28 Jan", img: "https://images.unsplash.com/photo-1532059345579-2475e206085e?q=80&w=1000&auto=format&fit=crop" },
-            { title: "Emendas para o Hospital Regional", city: "Estância", date: "25 Jan", img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1000&auto=format&fit=crop" }
-        ];
+        let usuarioLogado = null;
+        let tipoEmendaAtual = 'impositiva';
 
-        const fakeNewsData = [
-            {
-                fake: "Kaka Santos votou pelo aumento de impostos.",
-                truth: "O voto foi CONTRA qualquer aumento da carga tributária. Kaka defendeu a redução de impostos para a cesta básica.",
-                status: "FALSO"
-            },
-            {
-                fake: "O deputado faltou à votação importante.",
-                truth: "Kaka estava presente e presidiu a sessão da comissão no mesmo horário. Os registros oficiais da câmara comprovam.",
-                status: "FALSO"
-            }
-        ];
+        // Dados Iniciais (Mock)
+        const dadosPadrao = {
+            emendas: [
+                { id: 1, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Saúde', objeto: 'Reforma Posto Central', executor: 'Prefeitura', valor: 250000 },
+                { id: 2, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Povoado Barrinha', area: 'Educação', objeto: 'Ônibus Escolar', executor: 'Secretaria Edu', valor: 300000 },
+                { id: 3, ano: 2026, tipo: 'impositiva', cidade: 'Aracaju', bairro: null, area: 'Infraestrutura', objeto: 'Pavimentação Rua X', executor: 'Emurb', valor: 500000 },
+                { id: 4, ano: 2026, tipo: 'especial', cidade: 'Lagarto', bairro: null, area: 'Saúde', objeto: 'Equipamentos Hospital', executor: 'Fundo Mun.', valor: 150000 },
+                { id: 5, ano: 2025, tipo: 'impositiva', cidade: 'Estância', bairro: null, area: 'Cultura', objeto: 'Show Aniversário', executor: 'Prefeitura', valor: 100000 },
+                { id: 6, ano: 2026, tipo: 'nao-impositiva', cidade: 'Itabaiana', bairro: null, area: 'Esporte', objeto: 'Quadra Poliesportiva', executor: 'Sedurb', valor: 200000 }
+            ],
+            agenda: [],
+            kanban: [],
+            notas: []
+        };
 
-        const cities = ["Geral", "Aracaju", "Lagarto", "Estância", "Interior"];
-        let currentCity = "Geral";
+        let dados = JSON.parse(localStorage.getItem('mandato_v2')) || dadosPadrao;
 
-        // LÓGICA DE RENDERIZAÇÃO
+        function salvar() { localStorage.setItem('mandato_v2', JSON.stringify(dados)); }
+        const formatarMoeda = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
-        function renderHero() {
-            const container = document.getElementById('heroGrid');
-            let html = '';
+        // ================= AUTH =================
+        function fazerLogin() {
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            const user = usuarios.find(u => u.email === email && u.senha === senha);
             
-            // O primeiro item é o destaque grande (2 colunas, 2 linhas)
-            const main = principalNews[0];
-            html += `
-                <div class="col-span-1 md:col-span-2 md:row-span-2 relative rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
-                    <img src="${main.img}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${main.title}">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 md:p-8">
-                        <span class="bg-kaka-yellow text-kaka-dark text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded mb-3 inline-block">${main.category}</span>
-                        <h2 class="text-2xl md:text-4xl text-white font-display font-black leading-tight group-hover:text-kaka-yellow transition-colors">${main.title}</h2>
-                    </div>
-                </div>
-            `;
+            if(user) {
+                usuarioLogado = user;
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('main-container').classList.remove('hidden');
+                document.getElementById('sidebar').classList.add('md:flex');
+                
+                // Set User Infos
+                document.querySelectorAll('#desktop-username').forEach(el => el.innerText = user.nome);
+                
+                // Load Kanban Checkboxes
+                const container = document.getElementById('kanban-responsaveis-list');
+                container.innerHTML = usuarios.map(u => 
+                    `<label class="flex items-center gap-1 text-sm bg-gray-100 px-2 py-1 rounded-lg"><input type="checkbox" value="${u.id}" class="resp-check"> ${u.nome}</label>`
+                ).join('');
 
-            // Os outros itens menores
-            principalNews.slice(1).forEach(item => {
-                html += `
-                    <div class="col-span-1 md:col-span-1 md:row-span-1 relative rounded-2xl overflow-hidden group cursor-pointer shadow-md min-h-[250px] md:min-h-0">
-                        <img src="${item.img}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.title}">
-                        <div class="absolute inset-0 bg-gradient-to-t from-kaka-blue/90 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="absolute bottom-0 left-0 p-6">
-                            <span class="text-white/70 text-[10px] font-bold uppercase tracking-widest block mb-1">${item.category}</span>
-                            <h3 class="text-lg text-white font-display font-bold leading-tight group-hover:underline decoration-kaka-yellow decoration-2 underline-offset-4">${item.title}</h3>
+                renderAll();
+                switchTab('dashboard');
+            } else {
+                alert('Credenciais inválidas');
+            }
+        }
+
+        function fazerLogout() {
+            location.reload();
+        }
+
+        // ================= NAV =================
+        function switchTab(tabId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`view-${tabId}`).classList.add('active');
+            
+            // Sidebar Active State
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                if(btn.dataset.target === tabId) {
+                    btn.classList.add('bg-gray-100', 'text-ios-blue');
+                } else {
+                    btn.classList.remove('bg-gray-100', 'text-ios-blue');
+                }
+            });
+
+            // Mobile Nav Active State
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const icon = btn.querySelector('i');
+                if(btn.dataset.target === tabId) {
+                    btn.classList.replace('text-gray-400', 'text-ios-blue');
+                    icon.classList.replace('ph', 'ph-fill');
+                } else {
+                    btn.classList.replace('text-ios-blue', 'text-gray-400');
+                    icon.classList.replace('ph-fill', 'ph');
+                }
+            });
+
+            // Mobile Title Update
+            const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas' };
+            document.getElementById('mobile-title').innerText = titles[tabId];
+
+            if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'emendas') renderEmendas();
+        }
+
+        // ================= LÓGICA DE EMENDAS =================
+        function mudarTipoEmenda(tipo) {
+            tipoEmendaAtual = tipo;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tipo}`).classList.add('active');
+            renderEmendas();
+        }
+
+        function renderEmendas() {
+            const anoSelecionado = document.getElementById('filtro-ano').value;
+            
+            // 1. Filtrar Dados
+            let emendasFiltradas = dados.emendas.filter(e => e.tipo === tipoEmendaAtual);
+            if(anoSelecionado !== 'todos') {
+                emendasFiltradas = emendasFiltradas.filter(e => e.ano == anoSelecionado);
+            }
+
+            // 2. Agrupar por Cidade para o Mapa/Lista
+            const mapaCidades = {};
+            emendasFiltradas.forEach(e => {
+                if(!mapaCidades[e.cidade]) mapaCidades[e.cidade] = { valor: 0, areas: {} };
+                mapaCidades[e.cidade].valor += e.valor;
+                if(!mapaCidades[e.cidade].areas[e.area]) mapaCidades[e.cidade].areas[e.area] = 0;
+                mapaCidades[e.cidade].areas[e.area] += e.valor;
+            });
+
+            // 3. Renderizar Mapa Visual (Heatmap Grid)
+            const mapContainer = document.getElementById('mapa-sergipe');
+            mapContainer.innerHTML = '';
+            
+            // Converter objeto em array e ordenar por valor
+            const cidadesOrdenadas = Object.keys(mapaCidades).map(k => ({ nome: k, ...mapaCidades[k] })).sort((a,b) => b.valor - a.valor);
+
+            cidadesOrdenadas.forEach(c => {
+                // Calcular intensidade da cor (mock)
+                const maxVal = cidadesOrdenadas[0].valor;
+                const percent = (c.valor / maxVal);
+                let bgClass = 'bg-blue-100 text-blue-900';
+                if(percent > 0.3) bgClass = 'bg-blue-300 text-blue-900';
+                if(percent > 0.6) bgClass = 'bg-blue-500 text-white';
+                if(percent > 0.8) bgClass = 'bg-blue-700 text-white';
+
+                mapContainer.innerHTML += `
+                    <div onclick="abrirDetalheCidade('${c.nome}')" class="${bgClass} heatmap-cell rounded-2xl p-3 flex flex-col justify-center items-center text-center aspect-square shadow-sm relative overflow-hidden group">
+                        <span class="font-bold text-sm leading-tight z-10">${c.nome}</span>
+                        <span class="text-[10px] opacity-80 z-10">${formatarMoeda(c.valor)}</span>
+                        <!-- Efeito de brilho -->
+                        <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                `;
+            });
+
+            if(cidadesOrdenadas.length === 0) {
+                mapContainer.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">Nenhum dado para este filtro.</p>';
+            }
+
+            // 4. Renderizar Lista/Ranking Lateral
+            const listaRanking = document.getElementById('lista-ranking-cidades');
+            listaRanking.innerHTML = '';
+            cidadesOrdenadas.forEach((c, idx) => {
+                listaRanking.innerHTML += `
+                    <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-xl cursor-pointer" onclick="abrirDetalheCidade('${c.nome}')">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-gray-200 text-xs font-bold flex items-center justify-center text-gray-600">${idx+1}</span>
+                            <span class="font-medium text-gray-700">${c.nome}</span>
+                        </div>
+                        <span class="font-bold text-ios-blue text-sm">${formatarMoeda(c.valor)}</span>
+                    </div>
+                `;
+            });
+
+            // 5. Renderizar Gráfico de Áreas (Global)
+            const areasGlobal = {};
+            emendasFiltradas.forEach(e => {
+                if(!areasGlobal[e.area]) areasGlobal[e.area] = 0;
+                areasGlobal[e.area] += e.valor;
+            });
+            const listaAreas = document.getElementById('lista-areas-geral');
+            listaAreas.innerHTML = '';
+            const totalGeral = emendasFiltradas.reduce((sum, e) => sum + e.valor, 0);
+
+            Object.keys(areasGlobal).sort((a,b) => areasGlobal[b] - areasGlobal[a]).forEach(area => {
+                const val = areasGlobal[area];
+                const pct = ((val / totalGeral) * 100).toFixed(1);
+                listaAreas.innerHTML += `
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="font-semibold text-gray-700">${area}</span>
+                            <span class="text-gray-500">${pct}% (${formatarMoeda(val)})</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-ios-blue h-2 rounded-full" style="width: ${pct}%"></div>
                         </div>
                     </div>
                 `;
             });
+        }
+
+        // Detalhe Cidade (Modal na Tela)
+        function abrirDetalheCidade(nomeCidade) {
+            const container = document.getElementById('detalhe-cidade-container');
+            const anoSelecionado = document.getElementById('filtro-ano').value;
             
-            // Box de chamada para ação (Fixo)
-            html += `
-                <div class="col-span-1 md:col-span-1 md:row-span-1 bg-kaka-blue rounded-2xl p-6 flex flex-col justify-center items-start text-white relative overflow-hidden group cursor-pointer hover:bg-blue-800 transition-colors">
-                    <i data-lucide="arrow-up-right" class="absolute top-6 right-6 w-8 h-8 text-kaka-yellow opacity-50 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1 group-hover:-translate-y-1"></i>
-                    <h3 class="text-2xl font-display font-black uppercase mb-2">Agenda<br>Oficial</h3>
-                    <p class="text-sm text-blue-100 mb-4">Confira onde Kaka estará nesta semana.</p>
-                    <span class="text-xs font-bold uppercase tracking-widest text-kaka-yellow border-b border-kaka-yellow pb-1">Ver calendário</span>
-                </div>
-            `;
+            // Filtrar
+            let itens = dados.emendas.filter(e => e.cidade === nomeCidade && e.tipo === tipoEmendaAtual);
+            if(anoSelecionado !== 'todos') itens = itens.filter(e => e.ano == anoSelecionado);
 
-            container.innerHTML = html;
-        }
-
-        function renderFilters() {
-            const container = document.getElementById('cityFilters');
-            container.innerHTML = cities.map(city => `
-                <button onclick="setCity('${city}')" 
-                    class="whitespace-nowrap pb-2 text-xs font-black uppercase tracking-widest transition-all ${currentCity === city ? 'text-kaka-blue border-b-4 border-kaka-blue' : 'text-slate-400 hover:text-slate-600 border-b-4 border-transparent'}">
-                    ${city}
-                </button>
-            `).join('');
-        }
-
-        function setCity(city) {
-            currentCity = city;
-            renderFilters();
-            renderNewsGrid();
-        }
-
-        function renderNewsGrid() {
-            const container = document.getElementById('newsGrid');
-            const filtered = currentCity === "Geral" ? allNews : allNews.filter(n => n.city === currentCity || n.city === "Geral");
-            
-            container.innerHTML = filtered.map(news => `
-                <div class="bg-white rounded-xl overflow-hidden hover-lift border border-slate-100 group">
-                    <div class="h-48 overflow-hidden relative">
-                        <img src="${news.img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                        <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-black text-kaka-blue uppercase tracking-wider shadow-sm">
-                            ${news.city}
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest block mb-2">${news.date}</span>
-                        <h4 class="text-lg font-display font-bold text-slate-900 leading-tight mb-4 group-hover:text-kaka-blue transition-colors">${news.title}</h4>
-                        <a href="#" class="inline-flex items-center text-kaka-blue text-xs font-black uppercase tracking-widest hover:underline">Ler matéria <i data-lucide="chevron-right" class="w-3 h-3 ml-1"></i></a>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        function renderFakeNews() {
-            const container = document.getElementById('fakeNewsContainer');
-            container.innerHTML = fakeNewsData.map(item => `
-                <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-colors">
-                    <div class="flex items-start gap-4 mb-6 opacity-60">
-                        <div class="w-10 h-10 min-w-[2.5rem] rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
-                            <i data-lucide="x" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <span class="text-red-400 text-[10px] font-black uppercase tracking-widest block mb-1">Boato circulando</span>
-                            <p class="text-white italic text-lg">"${item.fake}"</p>
-                        </div>
-                    </div>
-                    
-                    <div class="w-full h-px bg-white/10 mb-6"></div>
-
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 min-w-[2.5rem] rounded-full bg-kaka-yellow/20 flex items-center justify-center text-kaka-yellow">
-                            <i data-lucide="check" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <span class="text-kaka-yellow text-[10px] font-black uppercase tracking-widest block mb-1">A verdade dos fatos</span>
-                            <p class="text-white font-bold text-xl leading-snug">${item.truth}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Animação dos Números
-        function animateCounters() {
-            const counters = document.querySelectorAll('.counter');
-            counters.forEach(counter => {
-                const target = +counter.getAttribute('data-target');
-                const increment = target / 50;
-                let current = 0;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        counter.innerText = target + (counter.innerText.includes('%') ? '%' : '');
-                        clearInterval(timer);
-                    } else {
-                        counter.innerText = Math.ceil(current);
-                    }
-                }, 40);
-            });
-        }
-
-        // Menu Mobile
-        const menuBtn = document.getElementById('mobileMenuBtn');
-        const closeBtn = document.getElementById('closeMenuBtn');
-        const menu = document.getElementById('mobileMenu');
-        const links = document.querySelectorAll('.mobile-link');
-
-        function toggleMenu() {
-            const isOpen = !menu.classList.contains('translate-x-full');
-            if(isOpen) {
-                menu.classList.add('translate-x-full');
+            // Tobias Filter Logic
+            const filtroTobias = document.getElementById('tobias-filter-area');
+            if(nomeCidade === 'Tobias Barreto') {
+                filtroTobias.classList.remove('hidden');
+                // Aplica filtro de bairro se selecionado (via função auxiliar ou check aqui)
+                const bairroSelecionado = document.getElementById('filtro-bairro-tobias').value;
+                if(bairroSelecionado !== 'todos') {
+                    itens = itens.filter(e => e.bairro === bairroSelecionado);
+                }
             } else {
-                menu.classList.remove('translate-x-full');
+                filtroTobias.classList.add('hidden');
+            }
+
+            // Totais
+            const total = itens.reduce((sum, e) => sum + e.valor, 0);
+            
+            // Área Principal
+            const areas = {}; itens.forEach(e => areas[e.area] = (areas[e.area]||0) + e.valor);
+            const topArea = Object.keys(areas).sort((a,b) => areas[b] - areas[a])[0] || '-';
+
+            // Preencher DOM
+            document.getElementById('det-cidade-nome').innerText = nomeCidade;
+            document.getElementById('det-cidade-valor').innerText = formatarMoeda(total);
+            document.getElementById('det-cidade-area').innerText = topArea;
+
+            const tbody = document.getElementById('det-tabela-body');
+            tbody.innerHTML = '';
+            itens.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                        <td class="p-2 font-medium">${item.objeto} <span class="text-[10px] text-gray-400 block">${item.bairro ? item.bairro : ''}</span></td>
+                        <td class="p-2"><span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">${item.area}</span></td>
+                        <td class="p-2 text-xs text-gray-500">${item.executor}</td>
+                        <td class="p-2 text-right font-bold text-gray-800">${formatarMoeda(item.valor)}</td>
+                    </tr>
+                `;
+            });
+
+            container.classList.remove('hidden');
+            container.classList.remove('animate-pulse'); // Remove anim após abrir
+            // Scroll suave para detalhes no mobile
+            if(window.innerWidth < 768) container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function fecharDetalhes() {
+            document.getElementById('detalhe-cidade-container').classList.add('hidden');
+        }
+
+        function filtrarBairroTobias() {
+            // Re-renderiza os detalhes mantendo a cidade Tobias Barreto
+            abrirDetalheCidade('Tobias Barreto');
+        }
+
+        // Mock Upload PDF
+        function simularUploadPDF(input) {
+            if(input.files && input.files[0]) {
+                const ano = document.getElementById('filtro-ano').value === 'todos' ? 2026 : parseInt(document.getElementById('filtro-ano').value);
+                alert(`Lendo arquivo PDF para o ano ${ano}... (Simulação)`);
+                
+                setTimeout(() => {
+                    // Adicionar dados fake para mostrar que funcionou
+                    dados.emendas.push(
+                        { id: Date.now(), ano: ano, tipo: tipoEmendaAtual, cidade: 'Tobias Barreto', bairro: 'Bairro Santa Rita', area: 'Infraestrutura', objeto: 'Importado via PDF', executor: 'Obras', valor: 125000 },
+                        { id: Date.now()+1, ano: ano, tipo: tipoEmendaAtual, cidade: 'Nossa Senhora da Glória', bairro: null, area: 'Saúde', objeto: 'Ambulância PDF', executor: 'FMS', valor: 180000 }
+                    );
+                    salvar();
+                    renderEmendas();
+                    renderDashboard();
+                    alert("Dados importados com sucesso do PDF!");
+                }, 1500);
             }
         }
 
-        menuBtn.addEventListener('click', toggleMenu);
-        closeBtn.addEventListener('click', toggleMenu);
-        links.forEach(l => l.addEventListener('click', toggleMenu));
+        // ================= DASHBOARD =================
+        function renderDashboard() {
+            // Total Geral Emendas (Todos os tempos)
+            const total = dados.emendas.reduce((acc, e) => acc + e.valor, 0);
+            document.getElementById('dash-total-emendas').innerText = formatarMoeda(total);
 
-        // Inicialização
-        window.addEventListener('load', () => {
-            renderHero();
-            renderFilters();
-            renderNewsGrid();
-            renderFakeNews();
-            lucide.createIcons();
-            setTimeout(animateCounters, 500); // Inicia animação após carregar
-        });
+            const saude = dados.emendas.filter(e => e.area === 'Saúde').reduce((acc, e) => acc + e.valor, 0);
+            document.getElementById('dash-saude-val').innerText = formatarMoeda(saude);
+
+            const educ = dados.emendas.filter(e => e.area === 'Educação').reduce((acc, e) => acc + e.valor, 0);
+            document.getElementById('dash-educ-val').innerText = formatarMoeda(educ);
+        }
+
+        // ================= UTILS INICIAIS =================
+        function renderAll() {
+            renderDashboard();
+            renderEmendas();
+            // Outros renders simplificados para o exemplo...
+        }
+
+        // Drag and Drop Logic (Kanban)
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+
+        // Iniciar
+        window.onload = () => {
+            if(localStorage.getItem('mandato_v2')) {
+                // Se já houver login salvo poderia pular, mas por segurança pede login
+            }
+        };
 
     </script>
 </body>
