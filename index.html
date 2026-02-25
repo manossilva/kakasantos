@@ -11,9 +11,6 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Chart.js para Gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <!-- Configuração Visual iOS/Apple -->
     <script>
         tailwind.config = {
@@ -58,9 +55,8 @@
         ::-webkit-scrollbar-thumb { background: #C7C7CC; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #8E8E93; }
 
-        /* Classes Utilitárias - CORREÇÃO DE ISOLAMENTO DE TELAS */
-        .page:not(.active) { display: none !important; }
-        .page.active { animation: fadeIn 0.3s ease; }
+        /* Animações Isoladas */
+        .page { animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .ios-input {
@@ -69,22 +65,15 @@
         }
         .ios-input:focus { background-color: #fff; border-color: #007AFF; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
 
-        .ios-btn {
-            transition: transform 0.1s;
-        }
+        .ios-btn { transition: transform 0.1s; }
         .ios-btn:active { transform: scale(0.97); }
 
-        .heatmap-cell {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+        .heatmap-cell { transition: all 0.3s ease; cursor: pointer; }
         .heatmap-cell:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
         /* Estilos do Calendário */
         .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
         }
         .calendar-day-header { text-align: center; font-size: 12px; font-weight: bold; color: #8E8E93; padding-bottom: 8px; }
         .calendar-cell {
@@ -124,7 +113,6 @@
         <div class="w-full max-w-sm bg-white p-6 rounded-3xl shadow-apple border border-gray-100 space-y-4">
             <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">E-mail</label>
-                <!-- Alterado default para Diogo para facilitar os testes das permissões -->
                 <input type="email" id="login-email" class="ios-input" value="diogo@kaka.com">
             </div>
             <div>
@@ -189,9 +177,10 @@
             <div id="mobile-avatar" onclick="fazerLogout()" class="w-9 h-9 rounded-full bg-ios-blue text-white flex items-center justify-center font-bold shadow-sm text-sm">US</div>
         </header>
 
-        <!-- ================= DASHBOARD ================= -->
-        <section id="view-dashboard" class="page ios-container">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- ================= DASHBOARD (VISÃO GERAL) ================= -->
+        <section id="view-dashboard" class="page ios-container" style="display: none;">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                
                 <!-- Card Principal Emendas -->
                 <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 text-white shadow-apple-lg relative overflow-hidden flex flex-col justify-between h-64 cursor-pointer" onclick="switchTab('emendas')">
                     <div class="absolute right-0 bottom-0 opacity-10"><i class="ph-fill ph-chart-line-up text-9xl"></i></div>
@@ -211,17 +200,35 @@
                     </div>
                 </div>
 
-                <!-- Widget Agenda Geral -->
-                <div class="bg-white rounded-3xl p-6 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('agenda')">
-                    <div class="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-ios-blue mb-4"><i class="ph-fill ph-calendar-check text-4xl"></i></div>
-                    <h4 class="font-bold text-xl text-gray-800">Compromissos Agendados</h4>
-                    <p class="text-sm text-gray-500 mt-2" id="dash-agenda-count">0 visitas/eventos este mês</p>
+                <!-- Grid de Resumos (Demandas, Agenda e Notas) -->
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <!-- Widget Demandas -->
+                    <div class="bg-white rounded-3xl p-5 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('kanban')">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-ios-purple mb-3"><i class="ph-fill ph-kanban text-2xl"></i></div>
+                        <h4 class="font-bold text-gray-800">Demandas</h4>
+                        <p class="text-xs text-gray-500 mt-1"><span id="dash-demandas-pendentes" class="font-bold">0</span> pendentes</p>
+                    </div>
+
+                    <!-- Widget Agenda -->
+                    <div class="bg-white rounded-3xl p-5 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('agenda')">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-ios-blue mb-3"><i class="ph-fill ph-calendar-check text-2xl"></i></div>
+                        <h4 class="font-bold text-gray-800">Agenda</h4>
+                        <p class="text-xs text-gray-500 mt-1"><span id="dash-agenda-hoje" class="font-bold">0</span> compromissos hoje</p>
+                    </div>
+
+                    <!-- Widget Notas (Ocupa as duas colunas) -->
+                    <div class="col-span-2 bg-yellow-50 rounded-3xl p-5 shadow-apple cursor-pointer hover:scale-[1.02] transition-transform border border-yellow-100 flex flex-col justify-center" onclick="switchTab('notas')">
+                        <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2"><i class="ph-fill ph-notebook"></i> Última Anotação</h4>
+                        <div id="dash-notas-preview" class="text-sm text-yellow-900 line-clamp-2 italic">Nenhuma nota recente.</div>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ================= EMENDAS (DIOGO HAS POWERS) ================= -->
-        <section id="view-emendas" class="page ios-container">
+        <section id="view-emendas" class="page ios-container" style="display: none;">
             <!-- Header e Filtros -->
             <div class="bg-white rounded-3xl shadow-apple p-2 mb-6 flex flex-col md:flex-row justify-between items-center sticky top-0 z-20">
                 <div class="p-2 w-full md:w-auto flex gap-2 items-center">
@@ -337,7 +344,7 @@
         </section>
 
         <!-- ================= AGENDA (GOOGLE CALENDAR STYLE) ================= -->
-        <section id="view-agenda" class="page ios-container h-full flex flex-col">
+        <section id="view-agenda" class="page ios-container h-full flex-col" style="display: none;">
             <h2 class="text-2xl font-bold mb-6">Meu Calendário</h2>
             
             <div class="flex flex-col lg:flex-row gap-6 flex-1 pb-10">
@@ -384,7 +391,7 @@
         </section>
 
         <!-- ================= KANBAN (DEMANDAS) ================= -->
-        <section id="view-kanban" class="page h-full flex flex-col">
+        <section id="view-kanban" class="page h-full flex-col" style="display: none;">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Demandas do Gabinete</h2>
                 <button onclick="abrirModalDemanda()" class="bg-ios-purple text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-purple-500/30">+ Criar Demanda</button>
@@ -413,7 +420,7 @@
         </section>
 
         <!-- ================= NOTAS ================= -->
-        <section id="view-notas" class="page ios-container">
+        <section id="view-notas" class="page ios-container" style="display: none;">
             <h2 class="text-2xl font-bold mb-6">Anotações</h2>
             <div class="bg-yellow-100 p-6 rounded-3xl shadow-apple mb-6 relative border border-yellow-200">
                 <textarea id="nova-nota" rows="2" class="w-full bg-transparent border-none outline-none text-lg text-yellow-900 placeholder-yellow-700/50 resize-none" placeholder="Digite uma nota ou lembrete rápido..."></textarea>
@@ -497,7 +504,7 @@
         // ================= DADOS E AUTENTICAÇÃO =================
         const usuarios = [
             { id: 1, nome: 'Ramon', email: 'ramon@kaka.com', senha: '123', cor: 'bg-purple-500', telefone: '5511999999999' },
-            { id: 2, nome: 'Diogo', email: 'diogo@kaka.com', senha: '123', cor: 'bg-blue-500', telefone: '5511888888888' }, // DIOGO (Permissões Especiais)
+            { id: 2, nome: 'Diogo', email: 'diogo@kaka.com', senha: '123', cor: 'bg-blue-500', telefone: '5511888888888' }, 
             { id: 3, nome: 'Kaká', email: 'kaka@kaka.com', senha: '123', cor: 'bg-gray-800', telefone: '5511777777777' }
         ];
 
@@ -522,9 +529,9 @@
             notas: []
         };
 
-        let dados = JSON.parse(localStorage.getItem('mandato_v3')) || dadosPadrao;
+        let dados = JSON.parse(localStorage.getItem('mandato_v4')) || dadosPadrao;
 
-        function salvar() { localStorage.setItem('mandato_v3', JSON.stringify(dados)); }
+        function salvar() { localStorage.setItem('mandato_v4', JSON.stringify(dados)); }
         const formatarMoeda = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
         const formatarDataBR = d => d ? d.split('-').reverse().join('/') : '';
 
@@ -540,19 +547,16 @@
                 document.getElementById('main-container').classList.remove('hidden');
                 document.getElementById('sidebar').classList.add('md:flex');
                 
-                // Set User Infos
                 document.querySelectorAll('#desktop-username').forEach(el => el.innerText = user.nome);
                 document.querySelectorAll('#desktop-avatar, #mobile-avatar').forEach(el => {
                     el.innerText = user.nome.substring(0,2).toUpperCase();
                     el.className = el.className.replace(/bg-\w+-\d+/g, '') + ' ' + user.cor + ' text-white';
                 });
                 
-                // Permissão exclusiva do Diogo (Upload PDF Emendas)
                 if(user.nome === 'Diogo' || user.id === 2) {
                     document.getElementById('area-upload-pdf').style.display = 'block';
                 }
 
-                // Load Kanban Checkboxes
                 const container = document.getElementById('kanban-responsaveis-list');
                 container.innerHTML = usuarios.map(u => 
                     `<label class="flex items-center gap-1 text-sm bg-white border border-gray-200 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"><input type="checkbox" value="${u.id}" class="resp-check ios-checkbox accent-ios-purple w-4 h-4"> ${u.nome}</label>`
@@ -567,11 +571,14 @@
 
         function fazerLogout() { location.reload(); }
 
-        // ================= NAV =================
+        // ================= NAV (ISOLAMENTO CORRIGIDO E DEFINITIVO) =================
         function switchTab(tabId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(`view-${tabId}`).classList.add('active');
+            // 1. Esconde absolutamente todas as sections
+            document.querySelectorAll('.page').forEach(p => {
+                p.style.display = 'none';
+            });
             
+            // 2. Ajusta as cores dos botões
             document.querySelectorAll('.sidebar-btn').forEach(btn => {
                 if(btn.dataset.target === tabId) btn.classList.add('bg-gray-100', 'text-ios-blue');
                 else btn.classList.remove('bg-gray-100', 'text-ios-blue');
@@ -591,6 +598,15 @@
             const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas' };
             document.getElementById('mobile-title').innerText = titles[tabId];
 
+            // 3. Exibe a section Alvo com o formato de display correto
+            const target = document.getElementById(`view-${tabId}`);
+            if(tabId === 'kanban' || tabId === 'agenda') {
+                target.style.display = 'flex';
+            } else {
+                target.style.display = 'block';
+            }
+
+            // 4. Renderiza os dados atuais
             if(tabId === 'dashboard') renderDashboard();
             if(tabId === 'emendas') renderEmendas();
             if(tabId === 'agenda') renderCalendario();
@@ -743,7 +759,6 @@
             if(index > -1) {
                 dados.emendas[index].situacao = novaSituacao;
                 salvar();
-                // Re-aplica classes visuais locais se necessário, ou só re-renderiza
                 renderEmendas();
             }
         }
@@ -794,25 +809,19 @@
 
         // ================= AGENDA (CALENDÁRIO GOOGLE STYLE) =================
         function renderCalendario() {
-            // Desenha um mês estático ou dinâmico básico para visualização
             const grid = document.getElementById('calendario-grid');
             grid.innerHTML = '';
             
-            // Simulação simples: Março 2026 (Começa no Domingo)
-            // 31 Dias.
             const totalDias = 31;
             
             for(let i = 1; i <= totalDias; i++) {
-                // Formata o dia para casar com nosso array de eventos
                 const diaStr = i.toString().padStart(2, '0');
                 const dataCompleta = `2026-03-${diaStr}`;
                 
-                // Pega os eventos deste dia
                 const eventosHoje = dados.agenda.filter(a => a.data === dataCompleta);
                 
                 let eventosHTML = '';
                 eventosHoje.forEach(ev => {
-                    // Notificar via WhatsApp (agora inclui a descrição)
                     let clickAction = '';
                     if(ev.telefone) {
                         let msg = encodeURIComponent(`Olá ${ev.contato}, passando para lembrar nosso evento: ${ev.local}. Descrição: ${ev.descricao}. Dia ${formatarDataBR(ev.data)} às ${ev.hora}.`);
@@ -825,7 +834,7 @@
                     eventosHTML += `<div ${clickAction} class="event-chip shadow-sm mb-1 truncate" title="${ev.local} - ${ev.descricao}">${ev.hora} ${ev.local}</div>`;
                 });
 
-                const hoje = new Date().getDate() === i && new Date().getMonth() === 2 ? 'today' : ''; // Mock simples
+                const hoje = new Date().getDate() === i && new Date().getMonth() === 2 ? 'today' : ''; 
 
                 grid.innerHTML += `
                     <div class="calendar-cell ${hoje}">
@@ -855,7 +864,6 @@
 
         // ================= KANBAN =================
         function abrirModalDemanda() {
-            // Set default date to today for "Data de Recebimento"
             document.getElementById('kanban-data-rec').value = new Date().toISOString().split('T')[0];
             document.getElementById('modal-demanda').classList.remove('hidden');
         }
@@ -927,16 +935,16 @@
                 salvar();
                 document.getElementById('modal-demanda').classList.add('hidden');
                 
-                // Limpar campos
                 ['kanban-titulo','kanban-beneficiario','kanban-data-prazo'].forEach(id => document.getElementById(id).value = '');
                 document.querySelectorAll('.resp-check').forEach(cb => cb.checked = false);
                 
                 renderKanban();
+                renderDashboard();
             } else { alert("Preencha Título, Prazo e selecione responsáveis."); }
         }
 
         function deleteDemanda(id) {
-            if(confirm("Apagar demanda?")) { dados.kanban = dados.kanban.filter(k => k.id !== id); salvar(); renderKanban(); }
+            if(confirm("Apagar demanda?")) { dados.kanban = dados.kanban.filter(k => k.id !== id); salvar(); renderKanban(); renderDashboard(); }
         }
 
         // ================= NOTAS =================
@@ -948,19 +956,34 @@
         }
         function addNota() {
             const texto = document.getElementById('nova-nota').value;
-            if(texto) { dados.notas.unshift({ id: Date.now(), texto }); salvar(); document.getElementById('nova-nota').value = ''; renderNotas(); }
+            if(texto) { dados.notas.unshift({ id: Date.now(), texto }); salvar(); document.getElementById('nova-nota').value = ''; renderNotas(); renderDashboard(); }
         }
-        function deleteNota(id) { dados.notas = dados.notas.filter(n => n.id !== id); salvar(); renderNotas(); }
+        function deleteNota(id) { dados.notas = dados.notas.filter(n => n.id !== id); salvar(); renderNotas(); renderDashboard(); }
 
         // ================= DASHBOARD / UTILS =================
         function renderDashboard() {
+            // Emendas
             const total = dados.emendas.reduce((acc, e) => acc + e.valor, 0);
             document.getElementById('dash-total-emendas').innerText = formatarMoeda(total);
             document.getElementById('dash-saude-val').innerText = formatarMoeda(dados.emendas.filter(e => e.area === 'Saúde').reduce((acc, e) => acc + e.valor, 0));
             document.getElementById('dash-educ-val').innerText = formatarMoeda(dados.emendas.filter(e => e.area === 'Educação').reduce((acc, e) => acc + e.valor, 0));
             
-            // Agenda count - Simples contagem total mock (ou pode ser filtrada por mes)
-            document.getElementById('dash-agenda-count').innerText = `${dados.agenda.length} agendamentos gerais`;
+            // Demandas Pendentes
+            const pendentes = dados.kanban.filter(k => k.status !== 'done').length;
+            document.getElementById('dash-demandas-pendentes').innerText = pendentes;
+
+            // Agenda (Hoje - mockado para comparar a quantidade real)
+            const hoje = new Date().toISOString().split('T')[0];
+            const agendaHoje = dados.agenda.filter(a => a.data === hoje).length;
+            document.getElementById('dash-agenda-hoje').innerText = agendaHoje;
+
+            // Notas
+            const notasPreview = document.getElementById('dash-notas-preview');
+            if(dados.notas.length > 0) {
+                notasPreview.innerText = dados.notas[0].texto;
+            } else {
+                notasPreview.innerText = "Nenhuma nota recente.";
+            }
         }
 
         function renderAll() {
@@ -976,7 +999,7 @@
             let col = ev.target;
             while(!col.classList.contains('kanban-column')) { col = col.parentElement; if(!col) return; }
             const index = dados.kanban.findIndex(k => k.id === id);
-            if(index > -1) { dados.kanban[index].status = col.id.replace('kb-', ''); salvar(); renderKanban(); }
+            if(index > -1) { dados.kanban[index].status = col.id.replace('kb-', ''); salvar(); renderKanban(); renderDashboard(); }
         }
     </script>
 </body>
