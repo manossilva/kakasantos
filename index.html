@@ -58,9 +58,9 @@
         ::-webkit-scrollbar-thumb { background: #C7C7CC; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #8E8E93; }
 
-        /* Classes Utilitárias */
-        .page { display: none; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
+        /* Classes Utilitárias - CORREÇÃO DE ISOLAMENTO DE TELAS */
+        .page:not(.active) { display: none !important; }
+        .page.active { animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .ios-input {
