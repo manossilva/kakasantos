@@ -53,10 +53,13 @@
         }
 
         /* Scrollbar customizada suave */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #C7C7CC; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #8E8E93; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* Animações Isoladas */
         .page { animation: fadeIn 0.3s ease; }
@@ -75,9 +78,7 @@
         .heatmap-cell:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
         /* Estilos do Calendário */
-        .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
-        }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .calendar-day-header { text-align: center; font-size: 12px; font-weight: bold; color: #8E8E93; padding-bottom: 8px; }
         .calendar-cell {
             min-height: 80px; background: #fff; border-radius: 8px; padding: 4px; border: 1px solid #E5E5EA;
@@ -130,8 +131,8 @@
     </section>
 
     <!-- ==================== SIDEBAR (DESKTOP) ==================== -->
-    <aside id="sidebar" class="hidden w-64 bg-white/80 backdrop-blur-xl h-full fixed left-0 top-0 border-r border-gray-200 flex-col p-6 z-40">
-        <div class="flex items-center gap-3 mb-10 px-2">
+    <aside id="sidebar" class="hidden w-64 bg-white/80 backdrop-blur-xl h-full fixed left-0 top-0 border-r border-gray-200 flex-col p-6 z-40 overflow-y-auto no-scrollbar">
+        <div class="flex items-center gap-3 mb-8 px-2">
             <div class="w-10 h-10 rounded-xl bg-ios-blue text-white flex items-center justify-center font-bold shadow-md">KS</div>
             <div>
                 <h1 class="font-bold text-lg leading-none">Kaká Santos</h1>
@@ -146,8 +147,14 @@
             <button onclick="switchTab('emendas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="emendas">
                 <i class="ph ph-currency-circle-dollar text-xl"></i> Emendas
             </button>
+            <button onclick="switchTab('propostas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="propostas">
+                <i class="ph ph-file-text text-xl"></i> Propostas Legis.
+            </button>
             <button onclick="switchTab('agenda')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="agenda">
                 <i class="ph ph-calendar-blank text-xl"></i> Agenda
+            </button>
+            <button onclick="switchTab('liderancas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="liderancas">
+                <i class="ph ph-users-three text-xl"></i> Lideranças
             </button>
             <button onclick="switchTab('kanban')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="kanban">
                 <i class="ph ph-kanban text-xl"></i> Demandas
@@ -184,7 +191,6 @@
         <section id="view-dashboard" class="page ios-container" style="display: none;">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 
-                <!-- Card Principal Emendas -->
                 <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 text-white shadow-apple-lg relative overflow-hidden flex flex-col justify-between h-64 cursor-pointer" onclick="switchTab('emendas')">
                     <div class="absolute right-0 bottom-0 opacity-10"><i class="ph-fill ph-chart-line-up text-9xl"></i></div>
                     <div>
@@ -203,34 +209,28 @@
                     </div>
                 </div>
 
-                <!-- Grid de Resumos (Demandas, Agenda e Notas) -->
                 <div class="grid grid-cols-2 gap-4">
-                    
-                    <!-- Widget Demandas -->
                     <div class="bg-white rounded-3xl p-5 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('kanban')">
                         <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-ios-purple mb-3"><i class="ph-fill ph-kanban text-2xl"></i></div>
                         <h4 class="font-bold text-gray-800">Demandas</h4>
                         <p class="text-xs text-gray-500 mt-1"><span id="dash-demandas-pendentes" class="font-bold">0</span> em andamento</p>
                     </div>
 
-                    <!-- Widget Agenda -->
                     <div class="bg-white rounded-3xl p-5 shadow-apple flex flex-col justify-center items-center text-center cursor-pointer hover:scale-[1.02] transition-transform" onclick="switchTab('agenda')">
                         <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-ios-blue mb-3"><i class="ph-fill ph-calendar-check text-2xl"></i></div>
                         <h4 class="font-bold text-gray-800">Agenda</h4>
                         <p class="text-xs text-gray-500 mt-1"><span id="dash-agenda-hoje" class="font-bold">0</span> compromissos hoje</p>
                     </div>
 
-                    <!-- Widget Notas -->
                     <div class="col-span-2 bg-yellow-50 rounded-3xl p-5 shadow-apple cursor-pointer hover:scale-[1.02] transition-transform border border-yellow-100 flex flex-col justify-center" onclick="switchTab('notas')">
                         <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2"><i class="ph-fill ph-notebook"></i> Última Anotação</h4>
                         <div id="dash-notas-preview" class="text-sm text-yellow-900 line-clamp-2 italic">Nenhuma nota recente.</div>
                     </div>
-
                 </div>
             </div>
         </section>
 
-        <!-- ================= EMENDAS (DIOGO HAS POWERS) ================= -->
+        <!-- ================= EMENDAS ================= -->
         <section id="view-emendas" class="page ios-container" style="display: none;">
             <div class="bg-white rounded-3xl shadow-apple p-2 mb-6 flex flex-col md:flex-row justify-between items-center sticky top-0 z-20">
                 <div class="p-2 w-full md:w-auto flex gap-2 items-center">
@@ -335,6 +335,91 @@
             </div>
         </section>
 
+        <!-- ================= PROPOSTAS LEGISLATIVAS ================= -->
+        <section id="view-propostas" class="page ios-container h-full flex-col" style="display: none;">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold">Propostas Legislativas</h2>
+                <button onclick="abrirModalProposta()" class="bg-ios-blue text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-blue-500/30">+ Novo Projeto de Lei</button>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6 flex-1 overflow-x-auto pb-4 items-start">
+                
+                <!-- Coluna Em Andamento -->
+                <div class="flex-1 min-w-[320px] bg-orange-50 rounded-3xl p-4 flex flex-col border border-orange-100">
+                    <h3 class="font-bold text-orange-700 mb-4 px-2 flex justify-between items-center">
+                        Projetos em Andamento <span class="bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full text-xs" id="prop-count-andamento">0</span>
+                    </h3>
+                    <div id="prop-andamento" class="flex-1 space-y-4"></div>
+                </div>
+
+                <!-- Coluna Aprovados -->
+                <div class="flex-1 min-w-[320px] bg-green-50 rounded-3xl p-4 flex flex-col border border-green-100">
+                    <h3 class="font-bold text-green-700 mb-4 px-2 flex justify-between items-center">
+                        Projetos Aprovados <span class="bg-green-200 text-green-800 px-2 py-0.5 rounded-full text-xs" id="prop-count-aprovado">0</span>
+                    </h3>
+                    <div id="prop-aprovado" class="flex-1 space-y-4"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= LIDERANÇAS & DISPAROS ================= -->
+        <section id="view-liderancas" class="page ios-container h-full flex-col" style="display: none;">
+            <h2 class="text-2xl font-bold mb-6">Lideranças e Avisos</h2>
+            
+            <div class="flex flex-col lg:flex-row gap-6 flex-1 pb-10">
+                
+                <!-- Formulário Cadastro e Programação -->
+                <div class="w-full lg:w-1/3 flex flex-col gap-6">
+                    
+                    <!-- Cadastrar Líder -->
+                    <div class="bg-white p-6 rounded-3xl shadow-apple">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="ph-fill ph-user-plus text-ios-blue"></i> Nova Liderança</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="lid-nome" placeholder="Nome da Liderança" class="ios-input text-sm">
+                            <input type="text" id="lid-base" placeholder="Localidade / Base / Cidade" class="ios-input text-sm">
+                            <input type="number" id="lid-telefone" placeholder="WhatsApp (Somente Nrs)" class="ios-input text-sm">
+                            <button onclick="addLideranca()" class="w-full bg-ios-blue text-white py-2.5 rounded-xl font-bold ios-btn">Salvar Contato</button>
+                        </div>
+                    </div>
+
+                    <!-- Programar Disparo -->
+                    <div class="bg-green-50 p-6 rounded-3xl border border-green-100 shadow-sm">
+                        <h3 class="font-bold text-lg mb-4 text-green-800 flex items-center gap-2"><i class="ph-fill ph-whatsapp-logo"></i> Programar Aviso</h3>
+                        <div class="space-y-3">
+                            <select id="disp-lideranca" class="ios-input bg-white text-sm">
+                                <!-- Preenchido JS -->
+                            </select>
+                            <input type="date" id="disp-data" class="ios-input bg-white text-sm">
+                            <textarea id="disp-mensagem" rows="3" placeholder="Mensagem do aviso (Ex: Kaká estará no bairro dia 10...)" class="ios-input bg-white resize-none text-sm"></textarea>
+                            <button onclick="addDisparo()" class="w-full bg-ios-green text-white py-2.5 rounded-xl font-bold ios-btn">Agendar Disparo</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Listas -->
+                <div class="w-full lg:w-2/3 flex flex-col gap-6">
+                    <!-- Avisos Programados -->
+                    <div class="bg-white p-6 rounded-3xl shadow-apple flex-1">
+                        <h3 class="font-bold text-lg mb-4">Avisos Programados</h3>
+                        <div id="lista-disparos" class="space-y-3">
+                            <!-- Preenchido JS -->
+                        </div>
+                    </div>
+
+                    <!-- Lideranças Cadastradas -->
+                    <div class="bg-white p-6 rounded-3xl shadow-apple max-h-[300px] overflow-y-auto">
+                        <h3 class="font-bold text-lg mb-4">Rede de Lideranças</h3>
+                        <div id="lista-liderancas" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <!-- Preenchido JS -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <!-- ================= AGENDA ================= -->
         <section id="view-agenda" class="page ios-container h-full flex-col" style="display: none;">
             <h2 class="text-2xl font-bold mb-6">Meu Calendário</h2>
@@ -349,7 +434,7 @@
                         <input type="text" id="agenda-local" placeholder="Local / Título" class="ios-input">
                         <textarea id="agenda-descricao" rows="2" placeholder="Descrição do Evento..." class="ios-input resize-none text-sm"></textarea>
                         <div class="pt-2 border-t border-gray-100">
-                            <p class="text-xs font-bold text-gray-500 mb-2 uppercase">Conectar Contato</p>
+                            <p class="text-xs font-bold text-gray-500 mb-2 uppercase">Conectar Contato Rápido</p>
                             <input type="text" id="agenda-contato" placeholder="Nome do Contato" class="ios-input mb-2 text-sm">
                             <input type="number" id="agenda-telefone" placeholder="WhatsApp (Somente Nrs)" class="ios-input text-sm">
                         </div>
@@ -384,7 +469,6 @@
                 </div>
             </div>
             
-            <!-- Container Dinâmico de Colunas -->
             <div id="kanban-columns-container" class="flex flex-col md:flex-row gap-6 flex-1 overflow-x-auto pb-4 items-start">
                 <!-- Colunas Renderizadas via JS -->
             </div>
@@ -404,36 +488,40 @@
 
     </main>
 
-    <!-- NAVEGAÇÃO MOBILE (BOTTOM) -->
-    <nav id="mobile-nav" class="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-200 flex justify-around items-center pb-safe pt-2 px-2 z-50 h-20">
-        <button onclick="switchTab('dashboard')" class="nav-btn text-ios-blue flex flex-col items-center p-2 w-1/5" data-target="dashboard">
+    <!-- NAVEGAÇÃO MOBILE (BOTTOM) COM SCROLL HORIZONTAL -->
+    <nav id="mobile-nav" class="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-200 flex justify-start items-center pb-safe pt-2 px-2 z-50 h-20 overflow-x-auto no-scrollbar gap-1">
+        <button onclick="switchTab('dashboard')" class="nav-btn text-ios-blue flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="dashboard">
             <i class="ph-fill ph-house text-2xl mb-1"></i><span class="text-[10px] font-medium">Início</span>
         </button>
-        <button onclick="switchTab('emendas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="emendas">
+        <button onclick="switchTab('emendas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="emendas">
             <i class="ph ph-currency-circle-dollar text-2xl mb-1"></i><span class="text-[10px] font-medium">Emendas</span>
         </button>
-        <button onclick="switchTab('agenda')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="agenda">
+        <button onclick="switchTab('propostas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="propostas">
+            <i class="ph ph-file-text text-2xl mb-1"></i><span class="text-[10px] font-medium">Projetos</span>
+        </button>
+        <button onclick="switchTab('liderancas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="liderancas">
+            <i class="ph ph-users-three text-2xl mb-1"></i><span class="text-[10px] font-medium">Liderança</span>
+        </button>
+        <button onclick="switchTab('agenda')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="agenda">
             <i class="ph ph-calendar-blank text-2xl mb-1"></i><span class="text-[10px] font-medium">Agenda</span>
         </button>
-        <button onclick="switchTab('kanban')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="kanban">
+        <button onclick="switchTab('kanban')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="kanban">
             <i class="ph ph-kanban text-2xl mb-1"></i><span class="text-[10px] font-medium">Demandas</span>
         </button>
-        <button onclick="switchTab('notas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-1/5" data-target="notas">
+        <button onclick="switchTab('notas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="notas">
             <i class="ph ph-notebook text-2xl mb-1"></i><span class="text-[10px] font-medium">Notas</span>
         </button>
     </nav>
 
-    <!-- MODAL NOVA/EDITAR DEMANDA (KANBAN) -->
+    <!-- MODAL NOVA DEMANDA (KANBAN) -->
     <div id="modal-demanda" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <h3 class="text-xl font-bold mb-4" id="modal-demanda-title">Nova Demanda</h3>
-            
             <input type="text" id="kanban-titulo" placeholder="Título da demanda..." class="ios-input mb-3 font-semibold text-lg">
-            
             <div class="grid grid-cols-2 gap-3 mb-3">
                 <div>
                     <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Beneficiário</label>
-                    <input type="text" id="kanban-beneficiario" placeholder="Ex: População, Prefeito..." class="ios-input text-sm">
+                    <input type="text" id="kanban-beneficiario" placeholder="Ex: População..." class="ios-input text-sm">
                 </div>
                 <div>
                     <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Área</label>
@@ -446,7 +534,6 @@
                     </select>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
                     <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Data Recebimento</label>
@@ -457,15 +544,46 @@
                     <input type="date" id="kanban-data-prazo" class="ios-input text-sm">
                 </div>
             </div>
-
             <div class="mb-6 bg-gray-50 p-3 rounded-xl border border-gray-100">
                 <p class="text-xs font-bold text-gray-600 mb-2">Responsáveis para Execução:</p>
                 <div id="kanban-responsaveis-list" class="flex flex-wrap gap-2"></div>
             </div>
-
             <div class="flex gap-3">
                 <button onclick="fecharModalDemanda()" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold ios-btn">Cancelar</button>
                 <button onclick="salvarDemanda()" id="btn-salvar-demanda" class="flex-1 bg-ios-purple text-white rounded-xl font-bold ios-btn">Criar Demanda</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVA PROPOSTA (PROJETOS LEI) -->
+    <div id="modal-proposta" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
+            <h3 class="text-xl font-bold mb-4" id="modal-proposta-title">Novo Projeto de Lei</h3>
+            <input type="text" id="prop-titulo" placeholder="Título ou Número do PL (Ex: PL 045/2026)" class="ios-input mb-3 font-semibold text-lg">
+            
+            <textarea id="prop-descricao" rows="3" placeholder="Descrição completa do projeto..." class="ios-input resize-none mb-3 text-sm"></textarea>
+            
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Situação Inicial</label>
+                    <select id="prop-status" class="ios-input bg-gray-50 text-sm">
+                        <option value="andamento">Em Andamento</option>
+                        <option value="aprovado">Aprovado</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-gray-500 pl-1">Documento (PDF/Word)</label>
+                    <label class="bg-gray-100 text-gray-700 px-4 py-3 rounded-xl text-sm font-bold cursor-pointer flex items-center justify-center gap-2 border border-gray-200 hover:bg-gray-200">
+                        <i class="ph-bold ph-upload-simple"></i> Anexar Arquivo
+                        <input type="file" id="prop-arquivo" class="hidden" onchange="atualizarNomeArquivo(this)">
+                    </label>
+                    <p id="prop-arquivo-nome" class="text-[10px] text-gray-400 mt-1 truncate">Nenhum arquivo...</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="fecharModalProposta()" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold ios-btn">Cancelar</button>
+                <button onclick="salvarProposta()" id="btn-salvar-proposta" class="flex-1 bg-ios-blue text-white rounded-xl font-bold ios-btn">Salvar Projeto</button>
             </div>
         </div>
     </div>
@@ -482,32 +600,36 @@
         let usuarioLogado = null;
         let tipoEmendaAtual = 'impositiva';
         let visaoEmendaAtual = 'mapa';
-        let demandaEmEdicaoId = null; // Controle de edição de card Kanban
+        let demandaEmEdicaoId = null; 
+        let propostaEmEdicaoId = null;
 
-        // Dados Iniciais (Mock)
+        // Dados Iniciais (Mock - V6 para forçar estrutura nova)
         const dadosPadrao = {
-            colunasKanban: [
-                { id: 'todo', titulo: 'A Fazer' },
-                { id: 'doing', titulo: 'Em Andamento' },
-                { id: 'done', titulo: 'Concluído' }
-            ],
+            colunasKanban: [ { id: 'todo', titulo: 'A Fazer' }, { id: 'doing', titulo: 'Em Andamento' }, { id: 'done', titulo: 'Concluído' } ],
             emendas: [
-                { id: 1, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Saúde', objeto: 'Reforma Posto Central', justificativa: 'Estrutura antiga', executor: 'Prefeitura', valor: 250000, situacao: 'Pago' },
-                { id: 2, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Povoado Barrinha', area: 'Educação', objeto: 'Ônibus Escolar', justificativa: 'Transporte rural', executor: 'Sec. Edu', valor: 300000, situacao: 'Pendente' }
+                { id: 1, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Saúde', objeto: 'Reforma Posto Central', justificativa: 'Estrutura antiga', executor: 'Prefeitura', valor: 250000, situacao: 'Pago' }
             ],
-            agenda: [
-                { id: 1, data: '2026-03-10', hora: '10:00', local: 'Reunião Sede', descricao: 'Alinhamento', contato: 'Ramon', telefone: '5511999999999'}
+            agenda: [],
+            kanban: [],
+            notas: [],
+            // NOVOS DADOS
+            propostas: [
+                { id: 1, titulo: 'PL 012/2026', descricao: 'Institui o programa de incentivo à leitura nas escolas da rede municipal, garantindo acervo mínimo.', status: 'andamento', arquivo: 'pl_leitura_v1.pdf' },
+                { id: 2, titulo: 'PL 045/2025', descricao: 'Redução de impostos para empresas de tecnologia no município.', status: 'aprovado', arquivo: 'pl_045_aprovado.pdf' }
             ],
-            kanban: [
-                { id: 'k1', texto: 'Verificar processo UBS', area: 'Saúde', beneficiario: 'População de Tobias', dataRec: '2026-02-20', dataPrazo: '2026-03-05', responsaveis: [1,2], criador: 1, status: 'todo' }
+            liderancas: [
+                { id: 1, nome: 'Marcos Almeida', base: 'Bairro Santa Rita - Tobias', telefone: '5511999998888' },
+                { id: 2, nome: 'Dona Maria', base: 'Povoado Barrinha', telefone: '5511977776666' }
             ],
-            notas: []
+            disparos: [
+                { id: 1, liderancaId: 1, data: '2026-03-15', mensagem: 'Olá Marcos, o deputado Kaká Santos estará visitando a UBS do Santa Rita no dia 15 pela manhã. Aguardamos sua presença!' }
+            ]
         };
 
-        // Usa versão v5 para evitar conflitos de cache antigo sem 'colunasKanban'
-        let dados = JSON.parse(localStorage.getItem('mandato_v5')) || dadosPadrao;
+        // Cache versão 6
+        let dados = JSON.parse(localStorage.getItem('mandato_v6')) || dadosPadrao;
 
-        function salvar() { localStorage.setItem('mandato_v5', JSON.stringify(dados)); }
+        function salvar() { localStorage.setItem('mandato_v6', JSON.stringify(dados)); }
         const formatarMoeda = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
         const formatarDataBR = d => d ? d.split('-').reverse().join('/') : '';
 
@@ -567,52 +689,218 @@
                 }
             });
 
-            const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas' };
+            const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas', 'propostas': 'Propostas Legislativas', 'liderancas': 'Lideranças' };
             document.getElementById('mobile-title').innerText = titles[tabId];
 
             const target = document.getElementById(`view-${tabId}`);
-            if(tabId === 'kanban' || tabId === 'agenda') target.style.display = 'flex';
+            if(tabId === 'kanban' || tabId === 'agenda' || tabId === 'propostas' || tabId === 'liderancas') target.style.display = 'flex';
             else target.style.display = 'block';
 
             if(tabId === 'dashboard') renderDashboard();
             if(tabId === 'emendas') renderEmendas();
             if(tabId === 'agenda') renderCalendario();
             if(tabId === 'kanban') renderKanban();
+            if(tabId === 'propostas') renderPropostas();
+            if(tabId === 'liderancas') renderLiderancas();
         }
 
-        // ================= LÓGICA DE EMENDAS =================
-        function mudarTipoEmenda(tipo) {
-            tipoEmendaAtual = tipo;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-${tipo}`).classList.add('active');
-            renderEmendas();
-        }
+        // ================= PROPOSTAS LEGISLATIVAS =================
+        function renderPropostas() {
+            const andamentoList = document.getElementById('prop-andamento');
+            const aprovadoList = document.getElementById('prop-aprovado');
+            andamentoList.innerHTML = ''; aprovadoList.innerHTML = '';
+            
+            let countAnd = 0, countAprov = 0;
 
-        function mudarVisaoEmenda(visao) {
-            visaoEmendaAtual = visao;
-            document.querySelectorAll('.view-btn').forEach(b => {
-                b.classList.remove('bg-white', 'shadow-sm', 'text-ios-blue');
-                b.classList.add('text-gray-500');
+            dados.propostas.forEach(p => {
+                const isAprovado = p.status === 'aprovado';
+                if(isAprovado) countAprov++; else countAnd++;
+
+                const cardHTML = `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2 relative group">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-lg text-gray-900 leading-tight pr-8">${p.titulo}</h4>
+                            <div class="flex gap-1 absolute right-3 top-3 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="editarProposta(${p.id})" class="text-gray-400 hover:text-ios-blue"><i class="ph-bold ph-pencil-simple"></i></button>
+                                <button onclick="deletarProposta(${p.id})" class="text-gray-400 hover:text-red-500"><i class="ph-bold ph-trash"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 line-clamp-3">${p.descricao}</p>
+                        
+                        <div class="mt-2 pt-3 border-t border-gray-100 flex flex-col gap-2">
+                            ${p.arquivo ? `<div class="flex items-center gap-1 text-xs font-bold text-ios-blue bg-blue-50 w-fit px-2 py-1 rounded"><i class="ph-bold ph-file-pdf"></i> ${p.arquivo}</div>` : ''}
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xs font-bold text-gray-500 uppercase">Status:</span>
+                                <select onchange="atualizarStatusProposta(${p.id}, this.value)" class="text-xs font-bold p-1 rounded border outline-none cursor-pointer ${isAprovado ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'}">
+                                    <option value="andamento" ${!isAprovado ? 'selected' : ''}>Em Andamento</option>
+                                    <option value="aprovado" ${isAprovado ? 'selected' : ''}>Aprovado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>`;
+
+                if(isAprovado) aprovadoList.innerHTML += cardHTML;
+                else andamentoList.innerHTML += cardHTML;
             });
-            const activeBtn = document.getElementById(`view-btn-${visao}`);
-            activeBtn.classList.add('bg-white', 'shadow-sm', 'text-ios-blue');
-            activeBtn.classList.remove('text-gray-500');
 
-            if(visao === 'mapa') {
-                document.getElementById('visao-mapa').classList.remove('hidden');
-                document.getElementById('visao-relatorio').classList.add('hidden');
-            } else {
-                document.getElementById('visao-mapa').classList.add('hidden');
-                document.getElementById('visao-relatorio').classList.remove('hidden');
-            }
-            renderEmendas();
+            document.getElementById('prop-count-andamento').innerText = countAnd;
+            document.getElementById('prop-count-aprovado').innerText = countAprov;
         }
 
+        function abrirModalProposta() {
+            propostaEmEdicaoId = null;
+            document.getElementById('modal-proposta-title').innerText = 'Novo Projeto de Lei';
+            ['prop-titulo','prop-descricao'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('prop-status').value = 'andamento';
+            document.getElementById('prop-arquivo').value = '';
+            document.getElementById('prop-arquivo-nome').innerText = 'Nenhum arquivo...';
+            document.getElementById('modal-proposta').classList.remove('hidden');
+        }
+
+        function fecharModalProposta() { document.getElementById('modal-proposta').classList.add('hidden'); }
+        
+        function atualizarNomeArquivo(input) {
+            if(input.files && input.files[0]) {
+                document.getElementById('prop-arquivo-nome').innerText = input.files[0].name;
+            }
+        }
+
+        function editarProposta(id) {
+            propostaEmEdicaoId = id;
+            const p = dados.propostas.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('modal-proposta-title').innerText = 'Editar Projeto';
+            document.getElementById('prop-titulo').value = p.titulo;
+            document.getElementById('prop-descricao').value = p.descricao;
+            document.getElementById('prop-status').value = p.status;
+            document.getElementById('prop-arquivo-nome').innerText = p.arquivo || 'Nenhum arquivo...';
+            document.getElementById('modal-proposta').classList.remove('hidden');
+        }
+
+        function salvarProposta() {
+            const titulo = document.getElementById('prop-titulo').value;
+            const descricao = document.getElementById('prop-descricao').value;
+            const status = document.getElementById('prop-status').value;
+            const inputArq = document.getElementById('prop-arquivo');
+            let arquivo = document.getElementById('prop-arquivo-nome').innerText;
+            if(arquivo === 'Nenhum arquivo...') arquivo = null;
+
+            // Se upou arquivo novo (mock)
+            if(inputArq.files && inputArq.files[0]) arquivo = inputArq.files[0].name;
+
+            if(titulo) {
+                if(propostaEmEdicaoId) {
+                    const idx = dados.propostas.findIndex(x => x.id === propostaEmEdicaoId);
+                    if(idx > -1) dados.propostas[idx] = { ...dados.propostas[idx], titulo, descricao, status, arquivo };
+                } else {
+                    dados.propostas.unshift({ id: Date.now(), titulo, descricao, status, arquivo });
+                }
+                salvar(); fecharModalProposta(); renderPropostas();
+            } else { alert("O Título do projeto é obrigatório."); }
+        }
+
+        function deletarProposta(id) {
+            if(confirm("Apagar projeto de lei?")) { dados.propostas = dados.propostas.filter(x => x.id !== id); salvar(); renderPropostas(); }
+        }
+
+        function atualizarStatusProposta(id, novoStatus) {
+            const idx = dados.propostas.findIndex(x => x.id === id);
+            if(idx > -1) { dados.propostas[idx].status = novoStatus; salvar(); renderPropostas(); }
+        }
+
+        // ================= LIDERANÇAS & DISPAROS =================
+        function renderLiderancas() {
+            const selectDisp = document.getElementById('disp-lideranca');
+            const listaLid = document.getElementById('lista-liderancas');
+            const listaDisp = document.getElementById('lista-disparos');
+            
+            // 1. Renderiza Lideranças Select & Lista
+            selectDisp.innerHTML = '<option value="" disabled selected>Selecione a Liderança...</option>';
+            listaLid.innerHTML = '';
+            
+            dados.liderancas.forEach(l => {
+                selectDisp.innerHTML += `<option value="${l.id}">${l.nome} (${l.base})</option>`;
+                listaLid.innerHTML += `
+                    <div class="bg-gray-50 border border-gray-100 p-3 rounded-xl flex justify-between items-center relative group">
+                        <div>
+                            <p class="font-bold text-sm text-gray-800">${l.nome}</p>
+                            <p class="text-xs text-gray-500">${l.base} <br> <span class="font-medium text-ios-green">${l.telefone}</span></p>
+                        </div>
+                        <button onclick="deletarLideranca(${l.id})" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-2"><i class="ph-bold ph-trash"></i></button>
+                    </div>`;
+            });
+            if(dados.liderancas.length===0) listaLid.innerHTML = '<p class="text-sm text-gray-400">Nenhuma liderança cadastrada.</p>';
+
+            // 2. Renderiza Disparos Programados
+            listaDisp.innerHTML = '';
+            // Ordenar por data
+            const disparosOrd = [...dados.disparos].sort((a,b) => new Date(a.data) - new Date(b.data));
+            
+            disparosOrd.forEach(d => {
+                const lid = dados.liderancas.find(x => x.id == d.liderancaId);
+                if(!lid) return;
+
+                let msgEncoded = encodeURIComponent(d.mensagem);
+                let link = `https://wa.me/${lid.telefone.replace(/\D/g, '')}?text=${msgEncoded}`;
+
+                listaDisp.innerHTML += `
+                    <div class="border-l-4 border-ios-green bg-gray-50 p-4 rounded-xl relative group">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="font-bold text-sm text-gray-800">Para: ${lid.nome}</p>
+                            <p class="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded"><i class="ph-bold ph-calendar-blank"></i> ${formatarDataBR(d.data)}</p>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3 bg-white p-2 border border-gray-100 rounded-lg italic line-clamp-2">"${d.mensagem}"</p>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="window.open('${link}', '_blank')" class="flex-1 bg-ios-green text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-1 hover:bg-green-600 transition-colors">
+                                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Enviar WhatsApp
+                            </button>
+                            <button onclick="deletarDisparo(${d.id})" class="px-3 bg-gray-200 text-gray-600 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors"><i class="ph-bold ph-trash"></i></button>
+                        </div>
+                    </div>`;
+            });
+            if(dados.disparos.length===0) listaDisp.innerHTML = '<p class="text-sm text-gray-400">Nenhum aviso programado.</p>';
+        }
+
+        function addLideranca() {
+            const nome = document.getElementById('lid-nome').value;
+            const base = document.getElementById('lid-base').value;
+            const telefone = document.getElementById('lid-telefone').value;
+            if(nome && telefone) {
+                dados.liderancas.push({ id: Date.now(), nome, base, telefone });
+                salvar(); ['lid-nome','lid-base','lid-telefone'].forEach(id => document.getElementById(id).value = '');
+                renderLiderancas();
+            } else alert('Nome e Telefone são obrigatórios.');
+        }
+
+        function deletarLideranca(id) {
+            if(confirm('Apagar contato da liderança? Isso não apaga os disparos já programados.')) {
+                dados.liderancas = dados.liderancas.filter(x => x.id !== id); salvar(); renderLiderancas();
+            }
+        }
+
+        function addDisparo() {
+            const liderancaId = document.getElementById('disp-lideranca').value;
+            const data = document.getElementById('disp-data').value;
+            const mensagem = document.getElementById('disp-mensagem').value;
+            if(liderancaId && data && mensagem) {
+                dados.disparos.push({ id: Date.now(), liderancaId, data, mensagem });
+                salvar(); ['disp-data','disp-mensagem'].forEach(id => document.getElementById(id).value = '');
+                renderLiderancas();
+            } else alert('Selecione liderança, data e digite a mensagem.');
+        }
+
+        function deletarDisparo(id) {
+            if(confirm('Cancelar este agendamento de mensagem?')) {
+                dados.disparos = dados.disparos.filter(x => x.id !== id); salvar(); renderLiderancas();
+            }
+        }
+
+        // ================= (OUTROS MÓDULOS MANTIDOS: EMENDAS, AGENDA, KANBAN, NOTAS) =================
         function renderEmendas() {
             const anoSelecionado = document.getElementById('filtro-ano').value;
             let emendasFiltradas = dados.emendas.filter(e => e.tipo === tipoEmendaAtual);
             if(anoSelecionado !== 'todos') emendasFiltradas = emendasFiltradas.filter(e => e.ano == anoSelecionado);
-
             if(visaoEmendaAtual === 'mapa') renderMapaEmendas(emendasFiltradas);
             else renderRelatorioEmendas(emendasFiltradas);
         }
@@ -635,18 +923,15 @@
                 if(percent > 0.3) bgClass = 'bg-blue-300 text-blue-900';
                 if(percent > 0.6) bgClass = 'bg-blue-500 text-white';
                 if(percent > 0.8) bgClass = 'bg-blue-700 text-white';
-
                 mapContainer.innerHTML += `
                     <div onclick="abrirDetalheCidade('${c.nome}')" class="${bgClass} heatmap-cell rounded-2xl p-3 flex flex-col justify-center items-center text-center aspect-square shadow-sm relative overflow-hidden group border border-blue-900/10">
                         <span class="font-bold text-sm leading-tight z-10">${c.nome}</span>
                         <span class="text-[10px] opacity-80 z-10">${formatarMoeda(c.valor)}</span>
                     </div>`;
             });
-
             if(cidadesOrdenadas.length === 0) mapContainer.innerHTML = '<p class="col-span-full text-center text-gray-400 py-6 font-medium">Nenhum dado encontrado para o filtro atual.</p>';
 
-            const listaRanking = document.getElementById('lista-ranking-cidades');
-            listaRanking.innerHTML = '';
+            const listaRanking = document.getElementById('lista-ranking-cidades'); listaRanking.innerHTML = '';
             cidadesOrdenadas.forEach((c, idx) => {
                 listaRanking.innerHTML += `
                     <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-xl cursor-pointer border border-transparent hover:border-gray-200 transition-colors" onclick="abrirDetalheCidade('${c.nome}')">
@@ -658,15 +943,12 @@
                     </div>`;
             });
 
-            const areasGlobal = {};
-            emendasFiltradas.forEach(e => areasGlobal[e.area] = (areasGlobal[e.area]||0) + e.valor);
-            const listaAreas = document.getElementById('lista-areas-geral');
-            listaAreas.innerHTML = '';
+            const areasGlobal = {}; emendasFiltradas.forEach(e => areasGlobal[e.area] = (areasGlobal[e.area]||0) + e.valor);
+            const listaAreas = document.getElementById('lista-areas-geral'); listaAreas.innerHTML = '';
             const totalGeral = emendasFiltradas.reduce((sum, e) => sum + e.valor, 0);
 
             Object.keys(areasGlobal).sort((a,b) => areasGlobal[b] - areasGlobal[a]).forEach(area => {
-                const val = areasGlobal[area];
-                const pct = ((val / totalGeral) * 100).toFixed(1);
+                const val = areasGlobal[area]; const pct = ((val / totalGeral) * 100).toFixed(1);
                 listaAreas.innerHTML += `
                     <div>
                         <div class="flex justify-between text-xs mb-1"><span class="font-semibold text-gray-700">${area}</span><span class="text-gray-500">${pct}%</span></div>
@@ -676,41 +958,26 @@
         }
 
         function renderRelatorioEmendas(emendasFiltradas) {
-            const tbody = document.getElementById('tabela-relatorio-body');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('tabela-relatorio-body'); tbody.innerHTML = '';
             const isDiogo = (usuarioLogado.nome === 'Diogo' || usuarioLogado.id === 2);
-
             emendasFiltradas.forEach(e => {
-                let statusBadge = '';
-                if(isDiogo) {
-                    statusBadge = `
-                        <select onchange="atualizarSituacaoEmenda(${e.id}, this.value)" class="text-xs font-bold p-1 rounded border outline-none cursor-pointer ${e.situacao === 'Pago' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}">
+                let statusBadge = isDiogo 
+                    ? `<select onchange="atualizarSituacaoEmenda(${e.id}, this.value)" class="text-xs font-bold p-1 rounded border outline-none cursor-pointer ${e.situacao === 'Pago' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}">
                             <option value="Pendente" ${e.situacao === 'Pendente' ? 'selected' : ''}>Pendente</option>
                             <option value="Pago" ${e.situacao === 'Pago' ? 'selected' : ''}>Pago</option>
-                        </select>
-                    `;
-                } else {
-                    const corBg = e.situacao === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
-                    statusBadge = `<span class="px-2 py-1 rounded-md text-xs font-bold ${corBg}">${e.situacao || 'Pendente'}</span>`;
-                }
-
+                       </select>`
+                    : `<span class="px-2 py-1 rounded-md text-xs font-bold ${e.situacao === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${e.situacao || 'Pendente'}</span>`;
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-50 transition-colors group">
                         <td class="p-3 font-semibold text-gray-900">${e.cidade}</td>
                         <td class="p-3"><span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-[11px] font-bold uppercase">${e.area}</span></td>
-                        <td class="p-3">
-                            <p class="font-bold text-gray-800">${e.objeto}</p>
-                            <p class="text-xs text-gray-500 mt-0.5 line-clamp-2" title="${e.justificativa}">${e.justificativa || 'Sem justificativa'}</p>
-                        </td>
+                        <td class="p-3"><p class="font-bold text-gray-800">${e.objeto}</p><p class="text-xs text-gray-500 mt-0.5 line-clamp-2" title="${e.justificativa}">${e.justificativa || 'Sem justificativa'}</p></td>
                         <td class="p-3 text-sm text-gray-600">${e.executor}</td>
                         <td class="p-3 text-right font-bold text-ios-blue">${formatarMoeda(e.valor)}</td>
                         <td class="p-3 text-center">${statusBadge}</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
-            if(emendasFiltradas.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-500">Nenhuma emenda encontrada para este filtro.</td></tr>';
-            }
+            if(emendasFiltradas.length === 0) tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-500">Nenhuma emenda encontrada para este filtro.</td></tr>';
         }
 
         function atualizarSituacaoEmenda(id, novaSituacao) {
@@ -721,25 +988,20 @@
         function abrirDetalheCidade(nomeCidade) {
             const container = document.getElementById('detalhe-cidade-container');
             const anoSelecionado = document.getElementById('filtro-ano').value;
-            
             let itens = dados.emendas.filter(e => e.cidade === nomeCidade && e.tipo === tipoEmendaAtual);
             if(anoSelecionado !== 'todos') itens = itens.filter(e => e.ano == anoSelecionado);
-
             const filtroTobias = document.getElementById('tobias-filter-area');
             if(nomeCidade === 'Tobias Barreto') {
                 filtroTobias.classList.remove('hidden');
                 const bairroSelecionado = document.getElementById('filtro-bairro-tobias').value;
                 if(bairroSelecionado !== 'todos') itens = itens.filter(e => e.bairro === bairroSelecionado);
             } else { filtroTobias.classList.add('hidden'); }
-
             const total = itens.reduce((sum, e) => sum + e.valor, 0);
             const areas = {}; itens.forEach(e => areas[e.area] = (areas[e.area]||0) + e.valor);
             const topArea = Object.keys(areas).sort((a,b) => areas[b] - areas[a])[0] || '-';
-
             document.getElementById('det-cidade-nome').innerText = nomeCidade;
             document.getElementById('det-cidade-valor').innerText = formatarMoeda(total);
             document.getElementById('det-cidade-area').innerText = topArea;
-
             container.classList.remove('hidden'); container.classList.remove('animate-pulse');
             if(window.innerWidth < 768) container.scrollIntoView({ behavior: 'smooth' });
         }
@@ -748,30 +1010,25 @@
         function simularUploadPDF(input) {
             if(input.files && input.files[0]) {
                 const ano = document.getElementById('filtro-ano').value === 'todos' ? 2026 : parseInt(document.getElementById('filtro-ano').value);
-                alert(`Lendo arquivo PDF para o ano ${ano}... Esta ação requer permissões do usuário Diogo.`);
+                alert(`Lendo arquivo PDF para o ano ${ano}... (Simulação)`);
                 setTimeout(() => {
-                    dados.emendas.push(
-                        { id: Date.now(), ano: ano, tipo: tipoEmendaAtual, cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Infraestrutura', objeto: 'Obra Importada (PDF)', justificativa: 'Lida via PDF', executor: 'Obras', valor: 200000, situacao: 'Pendente' }
-                    );
-                    salvar(); renderEmendas(); renderDashboard();
-                    alert("Dados importados com sucesso!");
+                    dados.emendas.push({ id: Date.now(), ano: ano, tipo: tipoEmendaAtual, cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Infraestrutura', objeto: 'Obra Importada', justificativa: 'Lida via PDF', executor: 'Obras', valor: 200000, situacao: 'Pendente' });
+                    salvar(); renderEmendas(); renderDashboard(); alert("Dados importados com sucesso!");
                 }, 1000);
             }
         }
 
-        // ================= AGENDA =================
+        // --- AGENDA ---
         function renderCalendario() {
-            const grid = document.getElementById('calendario-grid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('calendario-grid'); grid.innerHTML = '';
             for(let i = 1; i <= 31; i++) {
-                const diaStr = i.toString().padStart(2, '0');
-                const dataCompleta = `2026-03-${diaStr}`;
+                const diaStr = i.toString().padStart(2, '0'); const dataCompleta = `2026-03-${diaStr}`;
                 const eventosHoje = dados.agenda.filter(a => a.data === dataCompleta);
                 let eventosHTML = '';
                 eventosHoje.forEach(ev => {
                     let clickAction = '';
                     if(ev.telefone) {
-                        let msg = encodeURIComponent(`Olá ${ev.contato}, passando para lembrar nosso evento: ${ev.local}. Descrição: ${ev.descricao}. Dia ${formatarDataBR(ev.data)} às ${ev.hora}.`);
+                        let msg = encodeURIComponent(`Olá ${ev.contato}, lembrando nosso evento: ${ev.local}. Descrição: ${ev.descricao}. Dia ${formatarDataBR(ev.data)} às ${ev.hora}.`);
                         let link = `https://wa.me/${ev.telefone.replace(/\D/g, '')}?text=${msg}`;
                         clickAction = `onclick="window.open('${link}', '_blank')"`;
                     } else { clickAction = `onclick="alert('Evento: ${ev.local}\\nDesc: ${ev.descricao}')"`; }
@@ -782,195 +1039,81 @@
             }
         }
         function addAgenda() {
-            const data = document.getElementById('agenda-data').value;
-            const hora = document.getElementById('agenda-hora').value;
-            const local = document.getElementById('agenda-local').value;
-            const descricao = document.getElementById('agenda-descricao').value;
-            const contato = document.getElementById('agenda-contato').value;
-            const telefone = document.getElementById('agenda-telefone').value;
-
+            const data = document.getElementById('agenda-data').value, hora = document.getElementById('agenda-hora').value, local = document.getElementById('agenda-local').value, descricao = document.getElementById('agenda-descricao').value, contato = document.getElementById('agenda-contato').value, telefone = document.getElementById('agenda-telefone').value;
             if(data && local) {
-                dados.agenda.push({ id: Date.now(), data, hora, local, descricao, contato, telefone });
-                salvar();
+                dados.agenda.push({ id: Date.now(), data, hora, local, descricao, contato, telefone }); salvar();
                 ['agenda-data','agenda-hora','agenda-local','agenda-descricao','agenda-contato','agenda-telefone'].forEach(id => document.getElementById(id).value = '');
                 renderCalendario(); renderDashboard();
             } else { alert("Data e Local são obrigatórios."); }
         }
 
-        // ================= KANBAN (DINÂMICO & EDIÇÃO) =================
+        // --- KANBAN ---
         function adicionarColuna() {
             const titulo = prompt("Digite o nome da nova etapa (ex: Revisão, Parado):");
-            if(titulo && titulo.trim() !== '') {
-                const id = 'col_' + Date.now();
-                dados.colunasKanban.push({ id, titulo });
-                salvar();
-                renderKanban();
-            }
+            if(titulo && titulo.trim() !== '') { dados.colunasKanban.push({ id: 'col_' + Date.now(), titulo }); salvar(); renderKanban(); }
         }
-
         function abrirModalDemanda() {
-            demandaEmEdicaoId = null;
-            document.getElementById('modal-demanda-title').innerText = 'Nova Demanda';
-            document.getElementById('btn-salvar-demanda').innerText = 'Criar Demanda';
-            
-            // Limpa form
+            demandaEmEdicaoId = null; document.getElementById('modal-demanda-title').innerText = 'Nova Demanda'; document.getElementById('btn-salvar-demanda').innerText = 'Criar Demanda';
             ['kanban-titulo','kanban-beneficiario','kanban-data-prazo'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('kanban-data-rec').value = new Date().toISOString().split('T')[0];
             document.querySelectorAll('.resp-check').forEach(cb => cb.checked = false);
-            
             document.getElementById('modal-demanda').classList.remove('hidden');
         }
-
-        function fecharModalDemanda() {
-            document.getElementById('modal-demanda').classList.add('hidden');
-        }
-
+        function fecharModalDemanda() { document.getElementById('modal-demanda').classList.add('hidden'); }
         function editarDemanda(id) {
-            demandaEmEdicaoId = id;
-            const k = dados.kanban.find(d => d.id === id);
-            if(!k) return;
-
-            document.getElementById('modal-demanda-title').innerText = 'Editar Demanda';
-            document.getElementById('btn-salvar-demanda').innerText = 'Salvar Alterações';
-
-            document.getElementById('kanban-titulo').value = k.texto;
-            document.getElementById('kanban-beneficiario').value = k.beneficiario;
-            document.getElementById('kanban-area').value = k.area;
-            document.getElementById('kanban-data-rec').value = k.dataRec;
-            document.getElementById('kanban-data-prazo').value = k.dataPrazo;
-
-            document.querySelectorAll('.resp-check').forEach(cb => {
-                cb.checked = k.responsaveis.includes(parseInt(cb.value));
-            });
-
+            demandaEmEdicaoId = id; const k = dados.kanban.find(d => d.id === id); if(!k) return;
+            document.getElementById('modal-demanda-title').innerText = 'Editar Demanda'; document.getElementById('btn-salvar-demanda').innerText = 'Salvar Alterações';
+            document.getElementById('kanban-titulo').value = k.texto; document.getElementById('kanban-beneficiario').value = k.beneficiario;
+            document.getElementById('kanban-area').value = k.area; document.getElementById('kanban-data-rec').value = k.dataRec; document.getElementById('kanban-data-prazo').value = k.dataPrazo;
+            document.querySelectorAll('.resp-check').forEach(cb => { cb.checked = k.responsaveis.includes(parseInt(cb.value)); });
             document.getElementById('modal-demanda').classList.remove('hidden');
         }
-
         function salvarDemanda() {
-            const texto = document.getElementById('kanban-titulo').value;
-            const beneficiario = document.getElementById('kanban-beneficiario').value;
-            const area = document.getElementById('kanban-area').value;
-            const dataRec = document.getElementById('kanban-data-rec').value;
-            const dataPrazo = document.getElementById('kanban-data-prazo').value;
-            
-            const checkboxes = document.querySelectorAll('.resp-check:checked');
-            let responsaveis = Array.from(checkboxes).map(cb => parseInt(cb.value));
-
+            const texto = document.getElementById('kanban-titulo').value, beneficiario = document.getElementById('kanban-beneficiario').value, area = document.getElementById('kanban-area').value, dataRec = document.getElementById('kanban-data-rec').value, dataPrazo = document.getElementById('kanban-data-prazo').value;
+            const checkboxes = document.querySelectorAll('.resp-check:checked'); let responsaveis = Array.from(checkboxes).map(cb => parseInt(cb.value));
             if(texto && dataPrazo && responsaveis.length > 0) {
                 if(demandaEmEdicaoId) {
-                    // Atualizando existente
                     const index = dados.kanban.findIndex(d => d.id === demandaEmEdicaoId);
-                    if(index > -1) {
-                        dados.kanban[index] = {
-                            ...dados.kanban[index],
-                            texto, beneficiario, area, dataRec, dataPrazo, responsaveis
-                        };
-                    }
+                    if(index > -1) dados.kanban[index] = { ...dados.kanban[index], texto, beneficiario, area, dataRec, dataPrazo, responsaveis };
                 } else {
-                    // Criando nova
-                    dados.kanban.push({ 
-                        id: 'k' + Date.now(), texto, beneficiario, area, dataRec, dataPrazo, responsaveis, 
-                        criador: usuarioLogado.id, status: dados.colunasKanban[0].id // Vai pra primeira coluna 
-                    });
+                    dados.kanban.push({ id: 'k' + Date.now(), texto, beneficiario, area, dataRec, dataPrazo, responsaveis, criador: usuarioLogado.id, status: dados.colunasKanban[0].id });
                 }
-                
-                salvar();
-                fecharModalDemanda();
-                renderKanban();
-                renderDashboard();
+                salvar(); fecharModalDemanda(); renderKanban(); renderDashboard();
             } else { alert("Preencha Título, Prazo e selecione responsáveis."); }
         }
-
         function deleteDemanda(id) {
-            if(confirm("Deseja realmente apagar esta demanda?")) { 
-                dados.kanban = dados.kanban.filter(k => k.id !== id); 
-                salvar(); renderKanban(); renderDashboard(); 
-            }
+            if(confirm("Deseja apagar esta demanda?")) { dados.kanban = dados.kanban.filter(k => k.id !== id); salvar(); renderKanban(); renderDashboard(); }
         }
-
         function renderKanban() {
-            const container = document.getElementById('kanban-columns-container');
-            container.innerHTML = '';
-
-            // 1. Renderizar as colunas
+            const container = document.getElementById('kanban-columns-container'); container.innerHTML = '';
             dados.colunasKanban.forEach((col, index) => {
-                const isLastColumn = index === dados.colunasKanban.length - 1;
-                const count = dados.kanban.filter(k => k.status === col.id).length;
-
-                // Estilo Padrão (Neutro) vs Última Coluna (Azul)
-                const headerClass = isLastColumn ? 'text-ios-blue' : 'text-gray-700';
-                const badgeClass = isLastColumn ? 'bg-ios-blue text-white' : 'bg-gray-300 text-gray-700';
-                const bgClass = isLastColumn ? 'bg-blue-50/40 border-blue-100' : 'bg-gray-200/50 border-gray-200';
-
-                container.innerHTML += `
-                    <div class="flex-1 min-w-[320px] max-w-[380px] rounded-3xl p-4 flex flex-col border ${bgClass}">
-                        <h3 class="font-bold mb-4 px-2 flex justify-between items-center ${headerClass}">
-                            ${col.titulo} <span class="${badgeClass} px-2 py-0.5 rounded-full text-xs">${count}</span>
-                        </h3>
-                        <div id="kb-${col.id}" class="kanban-column flex-1 space-y-3 min-h-[100px]" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                    </div>
-                `;
+                const isLastColumn = index === dados.colunasKanban.length - 1; const count = dados.kanban.filter(k => k.status === col.id).length;
+                const headerClass = isLastColumn ? 'text-ios-blue' : 'text-gray-700'; const badgeClass = isLastColumn ? 'bg-ios-blue text-white' : 'bg-gray-300 text-gray-700'; const bgClass = isLastColumn ? 'bg-blue-50/40 border-blue-100' : 'bg-gray-200/50 border-gray-200';
+                container.innerHTML += `<div class="flex-1 min-w-[320px] max-w-[380px] rounded-3xl p-4 flex flex-col border ${bgClass}"><h3 class="font-bold mb-4 px-2 flex justify-between items-center ${headerClass}">${col.titulo} <span class="${badgeClass} px-2 py-0.5 rounded-full text-xs">${count}</span></h3><div id="kb-${col.id}" class="kanban-column flex-1 space-y-3 min-h-[100px]" ondrop="drop(event)" ondragover="allowDrop(event)"></div></div>`;
             });
-
-            // 2. Distribuir os cartões nas colunas
             dados.kanban.forEach(k => {
-                let avataresHTML = '';
-                k.responsaveis.forEach(userId => {
-                    const user = usuarios.find(u => u.id === userId);
-                    if(user) {
-                        avataresHTML += `<div class="w-7 h-7 rounded-full ${user.cor} text-white flex items-center justify-center text-[10px] font-bold border-2 border-white -ml-2 first:ml-0 shadow-sm" title="${user.nome}">${user.nome.substring(0,2).toUpperCase()}</div>`;
-                    }
-                });
-
-                const criador = usuarios.find(u => u.id === k.criador);
-                const nomeCriador = criador ? criador.nome : 'Sistema';
-
-                let corArea = 'bg-gray-100 text-gray-700';
-                if(k.area === 'Saúde') corArea = 'bg-red-100 text-red-700';
-                if(k.area === 'Comunicação') corArea = 'bg-purple-100 text-purple-700';
-                if(k.area === 'Jurídico') corArea = 'bg-blue-100 text-blue-700';
-
-                // DESTAQUE DA TAREFA: Se o usuário logado está na tarefa, cor especial.
+                let avataresHTML = ''; k.responsaveis.forEach(userId => { const user = usuarios.find(u => u.id === userId); if(user) avataresHTML += `<div class="w-7 h-7 rounded-full ${user.cor} text-white flex items-center justify-center text-[10px] font-bold border-2 border-white -ml-2 first:ml-0 shadow-sm" title="${user.nome}">${user.nome.substring(0,2).toUpperCase()}</div>`; });
+                const criador = usuarios.find(u => u.id === k.criador); const nomeCriador = criador ? criador.nome : 'Sistema';
+                let corArea = 'bg-gray-100 text-gray-700'; if(k.area === 'Saúde') corArea = 'bg-red-100 text-red-700'; if(k.area === 'Comunicação') corArea = 'bg-purple-100 text-purple-700'; if(k.area === 'Jurídico') corArea = 'bg-blue-100 text-blue-700';
                 const isMinhaTarefa = usuarioLogado && k.responsaveis.includes(usuarioLogado.id);
-                const cardBorder = isMinhaTarefa 
-                    ? 'border-ios-blue border-2 bg-blue-50 shadow-md shadow-blue-500/10' 
-                    : 'border-gray-100 bg-white shadow-apple';
-
-                const cardHTML = `
-                    <div id="${k.id}" class="${cardBorder} p-4 rounded-2xl cursor-grab active:cursor-grabbing flex flex-col gap-3" draggable="true" ondragstart="drag(event)">
-                        <div class="flex justify-between items-start">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${corArea}">${k.area}</span>
-                            <div class="flex gap-2">
-                                <button onclick="editarDemanda('${k.id}')" class="text-gray-300 hover:text-ios-blue transition-colors"><i class="ph-bold ph-pencil-simple text-sm"></i></button>
-                                <button onclick="deleteDemanda('${k.id}')" class="text-gray-300 hover:text-red-500 transition-colors"><i class="ph-bold ph-trash text-sm"></i></button>
-                            </div>
-                        </div>
-                        <p class="font-bold text-gray-900 leading-snug">${k.texto}</p>
-                        
-                        <div class="bg-white/60 p-2 rounded-lg border border-gray-100 text-[11px] text-gray-600 space-y-1">
-                            <p><strong>Ben:</strong> ${k.beneficiario || '-'}</p>
-                            <p><strong>Rec em:</strong> ${formatarDataBR(k.dataRec)} por ${nomeCriador}</p>
-                        </div>
-
-                        <div class="flex justify-between items-center mt-1 pt-3 border-t border-gray-100">
-                            <div class="flex text-xs font-bold ${new Date(k.dataPrazo) < new Date() && k.status !== dados.colunasKanban[dados.colunasKanban.length-1].id ? 'text-red-500' : 'text-gray-500'}">
-                                <i class="ph-bold ph-clock mr-1 text-sm"></i> ${formatarDataBR(k.dataPrazo)}
-                            </div>
-                            <div class="flex pl-2">${avataresHTML}</div>
-                        </div>
-                    </div>`;
-                
-                const colElement = document.getElementById(`kb-${k.status}`);
-                if(colElement) colElement.innerHTML += cardHTML;
+                const cardBorder = isMinhaTarefa ? 'border-ios-blue border-2 bg-blue-50 shadow-md shadow-blue-500/10' : 'border-gray-100 bg-white shadow-apple';
+                const cardHTML = `<div id="${k.id}" class="${cardBorder} p-4 rounded-2xl cursor-grab active:cursor-grabbing flex flex-col gap-3" draggable="true" ondragstart="drag(event)"><div class="flex justify-between items-start"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${corArea}">${k.area}</span><div class="flex gap-2"><button onclick="editarDemanda('${k.id}')" class="text-gray-300 hover:text-ios-blue transition-colors"><i class="ph-bold ph-pencil-simple text-sm"></i></button><button onclick="deleteDemanda('${k.id}')" class="text-gray-300 hover:text-red-500 transition-colors"><i class="ph-bold ph-trash text-sm"></i></button></div></div><p class="font-bold text-gray-900 leading-snug">${k.texto}</p><div class="bg-white/60 p-2 rounded-lg border border-gray-100 text-[11px] text-gray-600 space-y-1"><p><strong>Ben:</strong> ${k.beneficiario || '-'}</p><p><strong>Rec em:</strong> ${formatarDataBR(k.dataRec)} por ${nomeCriador}</p></div><div class="flex justify-between items-center mt-1 pt-3 border-t border-gray-100"><div class="flex text-xs font-bold ${new Date(k.dataPrazo) < new Date() && k.status !== dados.colunasKanban[dados.colunasKanban.length-1].id ? 'text-red-500' : 'text-gray-500'}"><i class="ph-bold ph-clock mr-1 text-sm"></i> ${formatarDataBR(k.dataPrazo)}</div><div class="flex pl-2">${avataresHTML}</div></div></div>`;
+                const colElement = document.getElementById(`kb-${k.status}`); if(colElement) colElement.innerHTML += cardHTML;
             });
         }
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        function drop(ev) {
+            ev.preventDefault(); const id = ev.dataTransfer.getData("text"); let col = ev.target;
+            while(!col.classList.contains('kanban-column')) { col = col.parentElement; if(!col) return; }
+            const index = dados.kanban.findIndex(k => k.id === id);
+            if(index > -1) { dados.kanban[index].status = col.id.replace('kb-', ''); salvar(); renderKanban(); renderDashboard(); }
+        }
 
-        // ================= NOTAS =================
+        // --- NOTAS & DASHBOARD ---
         function renderNotas() {
             const list = document.getElementById('notas-list'); list.innerHTML = '';
-            dados.notas.forEach(n => {
-                list.innerHTML += `<div class="bg-yellow-200/40 p-5 rounded-3xl relative shadow-sm border border-yellow-200"><p class="text-[16px] font-medium text-yellow-900 pr-6 leading-snug">${n.texto}</p><button onclick="deleteNota(${n.id})" class="absolute top-4 right-4 text-yellow-600/50 hover:text-red-500"><i class="ph-fill ph-x-circle text-2xl"></i></button></div>`;
-            });
+            dados.notas.forEach(n => { list.innerHTML += `<div class="bg-yellow-200/40 p-5 rounded-3xl relative shadow-sm border border-yellow-200"><p class="text-[16px] font-medium text-yellow-900 pr-6 leading-snug">${n.texto}</p><button onclick="deleteNota(${n.id})" class="absolute top-4 right-4 text-yellow-600/50 hover:text-red-500"><i class="ph-fill ph-x-circle text-2xl"></i></button></div>`; });
         }
         function addNota() {
             const texto = document.getElementById('nova-nota').value;
@@ -978,41 +1121,15 @@
         }
         function deleteNota(id) { dados.notas = dados.notas.filter(n => n.id !== id); salvar(); renderNotas(); renderDashboard(); }
 
-        // ================= DASHBOARD / UTILS =================
         function renderDashboard() {
-            const total = dados.emendas.reduce((acc, e) => acc + e.valor, 0);
-            document.getElementById('dash-total-emendas').innerText = formatarMoeda(total);
-            document.getElementById('dash-saude-val').innerText = formatarMoeda(dados.emendas.filter(e => e.area === 'Saúde').reduce((acc, e) => acc + e.valor, 0));
-            document.getElementById('dash-educ-val').innerText = formatarMoeda(dados.emendas.filter(e => e.area === 'Educação').reduce((acc, e) => acc + e.valor, 0));
-            
-            // Demandas pendentes (não estão na última coluna)
-            const idUltimaColuna = dados.colunasKanban[dados.colunasKanban.length-1].id;
-            const pendentes = dados.kanban.filter(k => k.status !== idUltimaColuna).length;
-            document.getElementById('dash-demandas-pendentes').innerText = pendentes;
-
-            const hoje = new Date().toISOString().split('T')[0];
-            const agendaHoje = dados.agenda.filter(a => a.data === hoje).length;
-            document.getElementById('dash-agenda-hoje').innerText = agendaHoje;
-
-            const notasPreview = document.getElementById('dash-notas-preview');
-            if(dados.notas.length > 0) notasPreview.innerText = dados.notas[0].texto;
-            else notasPreview.innerText = "Nenhuma nota recente.";
+            const total = dados.emendas.reduce((acc, e) => acc + e.valor, 0); document.getElementById('dash-total-emendas').innerText = formatarMoeda(total);
+            document.getElementById('dash-saude-val').innerText = formatarMoeda(dados.emendas.filter(e => e.area === 'Saúde').reduce((acc, e) => acc + e.valor, 0)); document.getElementById('dash-educ-val').innerText = formatarMoeda(dados.emendas.filter(e => e.area === 'Educação').reduce((acc, e) => acc + e.valor, 0));
+            const idUltimaColuna = dados.colunasKanban[dados.colunasKanban.length-1].id; document.getElementById('dash-demandas-pendentes').innerText = dados.kanban.filter(k => k.status !== idUltimaColuna).length;
+            const hoje = new Date().toISOString().split('T')[0]; document.getElementById('dash-agenda-hoje').innerText = dados.agenda.filter(a => a.data === hoje).length;
+            const notasPreview = document.getElementById('dash-notas-preview'); if(dados.notas.length > 0) notasPreview.innerText = dados.notas[0].texto; else notasPreview.innerText = "Nenhuma nota recente.";
         }
 
-        function renderAll() {
-            renderDashboard(); renderEmendas(); renderCalendario(); renderKanban(); renderNotas();
-        }
-
-        function allowDrop(ev) { ev.preventDefault(); }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
-        function drop(ev) {
-            ev.preventDefault();
-            const id = ev.dataTransfer.getData("text");
-            let col = ev.target;
-            while(!col.classList.contains('kanban-column')) { col = col.parentElement; if(!col) return; }
-            const index = dados.kanban.findIndex(k => k.id === id);
-            if(index > -1) { dados.kanban[index].status = col.id.replace('kb-', ''); salvar(); renderKanban(); renderDashboard(); }
-        }
+        function renderAll() { renderDashboard(); renderEmendas(); renderPropostas(); renderLiderancas(); renderCalendario(); renderKanban(); renderNotas(); }
     </script>
 </body>
 </html>
