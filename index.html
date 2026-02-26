@@ -339,27 +339,33 @@
             </div>
         </section>
 
-        <section id="view-arquivos" class="page ios-container h-full flex-col" style="display: none;">
+       <section id="view-arquivos" class="page ios-container h-full flex-col" style="display: none;">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold">Nuvem do Gabinete</h2>
+                    <h2 class="text-2xl font-bold flex items-center gap-2">
+                        <i class="ph-fill ph-google-logo text-blue-500"></i> Meu Drive
+                    </h2>
                     <div id="drive-breadcrumb" class="text-sm text-gray-500 font-medium flex items-center gap-1 mt-1">
                         </div>
                 </div>
                 <div class="flex gap-2 w-full sm:w-auto">
-                    <button onclick="novaPastaDrive()" class="flex-1 sm:flex-none bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold ios-btn shadow-sm hover:bg-gray-50 text-sm">
-                        + Nova Pasta
+                    <button id="btn-conectar-drive" onclick="autenticarGoogleDrive()" class="flex-1 sm:flex-none bg-ios-blue text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-blue-500/30 text-sm flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-plugs"></i> Conectar Drive
                     </button>
-                    <label class="flex-1 sm:flex-none bg-ios-blue text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-blue-500/30 cursor-pointer text-center text-sm">
+                    <label id="btn-upload-drive" class="hidden flex-1 sm:flex-none bg-ios-green text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-green-500/30 cursor-pointer text-center text-sm items-center justify-center gap-2">
                         <i class="ph-bold ph-upload-simple"></i> Subir Arquivo
-                        <input type="file" class="hidden" onchange="uploadArquivoDrive(this)">
+                        <input type="file" class="hidden" onchange="uploadParaGoogleDrive(this)">
                     </label>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-3xl shadow-apple flex-1 overflow-y-auto">
                 <div id="drive-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <div class="col-span-full text-center text-gray-400 py-10 font-medium w-full flex flex-col items-center">
+                        <i class="ph-fill ph-lock-key text-4xl mb-3 text-gray-300"></i>
+                        Clique em "Conectar Drive" para visualizar e gerenciar os arquivos do gabinete.
                     </div>
+                </div>
             </div>
         </section>
 
@@ -519,6 +525,7 @@
         </button>
         <button onclick="switchTab('arquivos')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="arquivos">
             <i class="ph ph-folder text-2xl mb-1"></i><span class="text-[10px] font-medium">Nuvem</span>
+        </button>
         </button>
         <button onclick="switchTab('propostas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="propostas">
             <i class="ph ph-file-text text-2xl mb-1"></i><span class="text-[10px] font-medium">Projetos</span>
