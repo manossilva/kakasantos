@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MandatoApp - Kaká Santos</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Chart.js para Gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Configuração Visual iOS/Apple -->
     <script>
         tailwind.config = {
             theme: {
@@ -100,13 +96,12 @@
             .calendar-cell { min-height: 50px; }
         }
 
-        .tab-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .tab-btn { color: #666; }
+        .tab-btn.active, .view-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tab-btn, .view-btn { color: #666; }
     </style>
 </head>
 <body class="text-gray-900 h-screen flex overflow-hidden bg-[#F2F2F7]">
 
-    <!-- ==================== TELA DE LOGIN ==================== -->
     <section id="view-login" class="flex flex-col items-center justify-center bg-white z-50 fixed inset-0">
         <div class="w-24 h-24 bg-gradient-to-br from-ios-blue to-ios-darkBlue rounded-3xl shadow-apple-lg flex items-center justify-center text-white mb-8">
             <i class="ph-fill ph-buildings text-5xl"></i>
@@ -130,7 +125,6 @@
         <p class="mt-8 text-xs text-gray-400 text-center">Contas: diogo@kaka.com | ramon@kaka.com <br> Senha: 123</p>
     </section>
 
-    <!-- ==================== SIDEBAR (DESKTOP) ==================== -->
     <aside id="sidebar" class="hidden w-64 bg-white/80 backdrop-blur-xl h-full fixed left-0 top-0 border-r border-gray-200 flex-col p-6 z-40 overflow-y-auto no-scrollbar">
         <div class="flex items-center gap-3 mb-8 px-2">
             <div class="w-10 h-10 rounded-xl bg-ios-blue text-white flex items-center justify-center font-bold shadow-md">KS</div>
@@ -146,6 +140,9 @@
             </button>
             <button onclick="switchTab('emendas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="emendas">
                 <i class="ph ph-currency-circle-dollar text-xl"></i> Emendas
+            </button>
+            <button onclick="switchTab('arquivos')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="arquivos">
+                <i class="ph ph-folder text-xl text-yellow-500"></i> Arquivos
             </button>
             <button onclick="switchTab('propostas')" class="sidebar-btn w-full flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium" data-target="propostas">
                 <i class="ph ph-file-text text-xl"></i> Propostas Legis.
@@ -178,10 +175,8 @@
         </div>
     </aside>
 
-    <!-- ==================== MAIN CONTENT ==================== -->
     <main class="flex-1 h-full overflow-y-auto w-full hidden" id="main-container">
         
-        <!-- HEADER MOBILE -->
         <header class="md:hidden flex justify-between items-center mb-6 pt-safe-top px-2">
             <div>
                 <p id="header-date" class="text-xs font-bold text-ios-gray uppercase tracking-wider mb-1"></p>
@@ -190,7 +185,6 @@
             <div id="mobile-avatar" onclick="fazerLogout()" class="w-9 h-9 rounded-full bg-ios-blue text-white flex items-center justify-center font-bold shadow-sm text-sm">US</div>
         </header>
 
-        <!-- ================= DASHBOARD (VISÃO GERAL) ================= -->
         <section id="view-dashboard" class="page ios-container" style="display: none;">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 
@@ -239,7 +233,6 @@
             </div>
         </section>
 
-        <!-- ================= EMENDAS ================= -->
         <section id="view-emendas" class="page ios-container" style="display: none;">
             <div class="bg-white rounded-3xl shadow-apple p-2 mb-6 flex flex-col md:flex-row justify-between items-center sticky top-0 z-20">
                 <div class="p-2 w-full md:w-auto flex gap-2 items-center">
@@ -344,7 +337,30 @@
             </div>
         </section>
 
-        <!-- ================= SAÚDE (NOVO MÓDULO) ================= -->
+        <section id="view-arquivos" class="page ios-container h-full flex-col" style="display: none;">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold">Nuvem do Gabinete</h2>
+                    <div id="drive-breadcrumb" class="text-sm text-gray-500 font-medium flex items-center gap-1 mt-1">
+                        </div>
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="novaPastaDrive()" class="flex-1 sm:flex-none bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold ios-btn shadow-sm hover:bg-gray-50 text-sm">
+                        + Nova Pasta
+                    </button>
+                    <label class="flex-1 sm:flex-none bg-ios-blue text-white px-4 py-2 rounded-xl font-bold ios-btn shadow-md shadow-blue-500/30 cursor-pointer text-center text-sm">
+                        <i class="ph-bold ph-upload-simple"></i> Subir Arquivo
+                        <input type="file" class="hidden" onchange="uploadArquivoDrive(this)">
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-apple flex-1 overflow-y-auto">
+                <div id="drive-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    </div>
+            </div>
+        </section>
+
         <section id="view-saude" class="page h-full flex-col" style="display: none;">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                 <h2 class="text-2xl font-bold">Gestão de Casos de Saúde</h2>
@@ -354,21 +370,17 @@
                 </div>
             </div>
 
-            <!-- Painel de Alertas de Follow-up (Oculto se não houver) -->
             <div id="saude-alertas-panel" class="mb-4 bg-red-50 border border-red-200 p-4 rounded-2xl hidden shadow-sm relative overflow-hidden">
                 <div class="absolute right-[-20px] top-[-20px] opacity-10 text-red-500"><i class="ph-fill ph-bell-ringing text-9xl"></i></div>
                 <h3 class="font-bold text-red-800 mb-2 flex items-center gap-2 relative z-10"><i class="ph-bold ph-warning-circle text-lg"></i> Pacientes precisando de retorno hoje ou atrasados</h3>
                 <div id="saude-alertas-list" class="flex flex-col gap-2 relative z-10">
-                    <!-- Preenchido JS -->
-                </div>
+                    </div>
             </div>
             
             <div id="saude-columns-container" class="flex flex-col md:flex-row gap-6 flex-1 overflow-x-auto pb-4 items-start">
-                <!-- Colunas Renderizadas via JS -->
-            </div>
+                </div>
         </section>
 
-        <!-- ================= PROPOSTAS LEGISLATIVAS ================= -->
         <section id="view-propostas" class="page ios-container h-full flex-col" style="display: none;">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <h2 class="text-2xl font-bold">Propostas Legislativas</h2>
@@ -394,7 +406,6 @@
             </div>
         </section>
 
-        <!-- ================= LIDERANÇAS & DISPAROS ================= -->
         <section id="view-liderancas" class="page ios-container h-full flex-col" style="display: none;">
             <h2 class="text-2xl font-bold mb-6">Lideranças e Avisos</h2>
             
@@ -433,7 +444,6 @@
             </div>
         </section>
 
-        <!-- ================= AGENDA ================= -->
         <section id="view-agenda" class="page ios-container h-full flex-col" style="display: none;">
             <h2 class="text-2xl font-bold mb-6">Meu Calendário</h2>
             <div class="flex flex-col lg:flex-row gap-6 flex-1 pb-10">
@@ -472,7 +482,6 @@
             </div>
         </section>
 
-        <!-- ================= KANBAN (DEMANDAS) ================= -->
         <section id="view-kanban" class="page h-full flex-col" style="display: none;">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <h2 class="text-2xl font-bold">Demandas Gerais do Gabinete</h2>
@@ -483,11 +492,9 @@
             </div>
             
             <div id="kanban-columns-container" class="flex flex-col md:flex-row gap-6 flex-1 overflow-x-auto pb-4 items-start">
-                <!-- Colunas Renderizadas via JS -->
-            </div>
+                </div>
         </section>
 
-        <!-- ================= NOTAS ================= -->
         <section id="view-notas" class="page ios-container" style="display: none;">
             <h2 class="text-2xl font-bold mb-6">Anotações</h2>
             <div class="bg-yellow-100 p-6 rounded-3xl shadow-apple mb-6 relative border border-yellow-200">
@@ -501,13 +508,15 @@
 
     </main>
 
-    <!-- NAVEGAÇÃO MOBILE (BOTTOM) COM SCROLL HORIZONTAL -->
     <nav id="mobile-nav" class="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-200 flex justify-start items-center pb-safe pt-2 px-2 z-50 h-20 overflow-x-auto no-scrollbar gap-1">
         <button onclick="switchTab('dashboard')" class="nav-btn text-ios-blue flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="dashboard">
             <i class="ph-fill ph-house text-2xl mb-1"></i><span class="text-[10px] font-medium">Início</span>
         </button>
         <button onclick="switchTab('emendas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="emendas">
             <i class="ph ph-currency-circle-dollar text-2xl mb-1"></i><span class="text-[10px] font-medium">Emendas</span>
+        </button>
+        <button onclick="switchTab('arquivos')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="arquivos">
+            <i class="ph ph-folder text-2xl mb-1"></i><span class="text-[10px] font-medium">Nuvem</span>
         </button>
         <button onclick="switchTab('propostas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="propostas">
             <i class="ph ph-file-text text-2xl mb-1"></i><span class="text-[10px] font-medium">Projetos</span>
@@ -524,12 +533,8 @@
         <button onclick="switchTab('kanban')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="kanban">
             <i class="ph ph-kanban text-2xl mb-1"></i><span class="text-[10px] font-medium">Demandas</span>
         </button>
-        <button onclick="switchTab('notas')" class="nav-btn text-gray-400 flex flex-col items-center p-2 w-20 flex-shrink-0" data-target="notas">
-            <i class="ph ph-notebook text-2xl mb-1"></i><span class="text-[10px] font-medium">Notas</span>
-        </button>
     </nav>
 
-    <!-- MODAL NOVA DEMANDA (KANBAN GERAL) -->
     <div id="modal-demanda" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <h3 class="text-xl font-bold mb-4" id="modal-demanda-title">Nova Demanda</h3>
@@ -571,7 +576,6 @@
         </div>
     </div>
 
-    <!-- MODAL NOVA PROPOSTA (PROJETOS LEI) -->
     <div id="modal-proposta" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <h3 class="text-xl font-bold mb-4" id="modal-proposta-title">Novo Projeto de Lei</h3>
@@ -601,7 +605,6 @@
         </div>
     </div>
 
-    <!-- MODAL NOVO CASO DE SAÚDE -->
     <div id="modal-saude" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <h3 class="text-xl font-bold mb-4 text-red-600 flex items-center gap-2" id="modal-saude-title"><i class="ph-fill ph-heartbeat"></i> Novo Caso de Saúde</h3>
@@ -626,7 +629,6 @@
         </div>
     </div>
 
-    <!-- MODAL DETALHES / COMENTÁRIOS / FOLLOW-UP DA SAÚDE -->
     <div id="modal-saude-detalhes" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-4">
@@ -643,7 +645,6 @@
                 </a>
             </div>
 
-            <!-- Follow-up Control -->
             <div class="bg-red-50 p-4 rounded-2xl border border-red-100 mb-4">
                 <p class="text-xs font-bold text-red-800 uppercase mb-2"><i class="ph-bold ph-bell-ringing"></i> Lembrete de Acompanhamento (Follow-up)</p>
                 <div class="flex flex-col sm:flex-row gap-3 items-center">
@@ -659,12 +660,9 @@
                 </div>
             </div>
 
-            <!-- Comments Section -->
             <div class="flex-1 overflow-y-auto pr-2 mb-4 space-y-3" id="det-saude-comentarios">
-                <!-- Comentarios renderizados via JS -->
-            </div>
+                </div>
 
-            <!-- Add Comment -->
             <div class="flex gap-2 pt-3 border-t border-gray-100 mt-auto">
                 <input type="text" id="input-saude-comentario" placeholder="Escreva uma atualização sobre o caso..." class="ios-input flex-1">
                 <button onclick="adicionarComentarioSaude()" class="bg-ios-blue text-white px-4 rounded-xl font-bold hover:bg-blue-600 transition-colors"><i class="ph-bold ph-paper-plane-right"></i></button>
@@ -672,7 +670,6 @@
         </div>
     </div>
 
-    <!-- SCRIPTS LÓGICA -->
     <script>
         // ================= DADOS E AUTENTICAÇÃO =================
         const usuarios = [
@@ -688,12 +685,16 @@
         let propostaEmEdicaoId = null;
         let saudeEmEdicaoId = null;
         let casoSaudeAtivoId = null;
+        
+        // Variaveis Nuvem/Drive
+        let pastaAtualDrive = 'root';
+        let historicoPastas = [{ id: 'root', nome: 'Nuvem Geral' }];
 
-        // Dados Iniciais (Mock - V7 com Módulo de Saúde)
+        // Dados Iniciais (Mock)
         const dadosPadrao = {
             colunasKanban: [ { id: 'todo', titulo: 'A Fazer' }, { id: 'doing', titulo: 'Em Andamento' }, { id: 'done', titulo: 'Concluído' } ],
             emendas: [ { id: 1, ano: 2026, tipo: 'impositiva', cidade: 'Tobias Barreto', bairro: 'Centro', area: 'Saúde', objeto: 'Reforma Posto Central', justificativa: 'Estrutura antiga', executor: 'Prefeitura', valor: 250000, situacao: 'Pago' } ],
-            agenda: [], kanban: [], notas: [], propostas: [], liderancas: [], disparos: [],
+            agenda: [], kanban: [], notas: [], propostas: [], liderancas: [], disparos: [], drive: [],
             // DADOS SAÚDE
             saudeColunas: [
                 { id: 's_triagem', titulo: 'Triagem / Recepção' },
@@ -704,15 +705,15 @@
                 { 
                     id: 's1', paciente: 'Dona Maria de Jesus', telefone: '5579988887777', 
                     caso: 'Cirurgia de Catarata Olho Direito', status: 's_triagem', 
-                    dataCriacao: '2025-02-25', proximoFollowUp: '2026-02-25', // Exemplo de follow up vencendo hoje (1 ano dps)
+                    dataCriacao: '2025-02-25', proximoFollowUp: '2026-02-25',
                     comentarios: [ { data: '2025-02-25T10:00:00', texto: 'Paciente deu entrada nos documentos da regulação.' } ]
                 }
             ]
         };
 
-        let dados = JSON.parse(localStorage.getItem('mandato_v7')) || dadosPadrao;
+        let dados = JSON.parse(localStorage.getItem('mandato_v8')) || dadosPadrao;
 
-        function salvar() { localStorage.setItem('mandato_v7', JSON.stringify(dados)); }
+        function salvar() { localStorage.setItem('mandato_v8', JSON.stringify(dados)); }
         const formatarMoeda = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
         const formatarDataBR = d => d ? d.split('-').reverse().join('/') : '';
         const formatarDataHoraBR = d => {
@@ -759,17 +760,152 @@
                 else { btn.classList.replace('text-ios-blue', 'text-gray-400'); icon.classList.replace('ph-fill', 'ph'); }
             });
 
-            const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas', 'propostas': 'Propostas Legislativas', 'liderancas': 'Lideranças', 'saude': 'Gestão de Saúde' };
+            const titles = { 'dashboard': 'Visão Geral', 'emendas': 'Emendas', 'agenda': 'Agenda', 'kanban': 'Demandas', 'notas': 'Notas', 'propostas': 'Propostas Legislativas', 'liderancas': 'Lideranças', 'saude': 'Gestão de Saúde', 'arquivos': 'Nuvem do Gabinete' };
             document.getElementById('mobile-title').innerText = titles[tabId];
 
             const target = document.getElementById(`view-${tabId}`);
-            if(['kanban', 'agenda', 'propostas', 'liderancas', 'saude'].includes(tabId)) target.style.display = 'flex';
+            if(['kanban', 'agenda', 'propostas', 'liderancas', 'saude', 'arquivos'].includes(tabId)) target.style.display = 'flex';
             else target.style.display = 'block';
 
-            if(tabId === 'dashboard') renderDashboard(); if(tabId === 'emendas') renderEmendas(); if(tabId === 'agenda') renderCalendario();
-            if(tabId === 'kanban') renderKanban(); if(tabId === 'propostas') renderPropostas(); if(tabId === 'liderancas') renderLiderancas();
+            if(tabId === 'dashboard') renderDashboard(); 
+            if(tabId === 'emendas') renderEmendas(); 
+            if(tabId === 'agenda') renderCalendario();
+            if(tabId === 'kanban') renderKanban(); 
+            if(tabId === 'propostas') renderPropostas(); 
+            if(tabId === 'liderancas') renderLiderancas();
             if(tabId === 'saude') renderSaude();
+            if(tabId === 'arquivos') renderDrive();
         }
+
+        // ================= ARQUIVOS (DRIVE / NUVEM) =================
+        function renderDrive() {
+            const grid = document.getElementById('drive-grid');
+            const breadcrumb = document.getElementById('drive-breadcrumb');
+            grid.innerHTML = '';
+            
+            breadcrumb.innerHTML = historicoPastas.map((p, index) => {
+                const isLast = index === historicoPastas.length - 1;
+                return `<span class="cursor-pointer hover:text-ios-blue ${isLast ? 'text-gray-900 font-bold' : ''}" onclick="navegarDriveTo(${index})">${p.nome}</span> ${!isLast ? '<i class="ph-bold ph-caret-right text-[10px] mx-1"></i>' : ''}`;
+            }).join('');
+
+            const itens = (dados.drive || []).filter(d => d.parentId === pastaAtualDrive);
+            
+            if(pastaAtualDrive !== 'root') {
+                grid.innerHTML += `
+                <div onclick="voltarDrive()" class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200">
+                    <div class="w-16 h-16 bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ph-arrow-u-up-left text-3xl"></i></div>
+                    <span class="text-sm font-semibold text-center text-gray-700">Voltar</span>
+                </div>`;
+            }
+
+            itens.forEach(item => {
+                if(item.tipo === 'pasta') {
+                    grid.innerHTML += `
+                    <div class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200 group relative">
+                        <button onclick="deletarItemDrive('${item.id}')" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100"><i class="ph-bold ph-trash"></i></button>
+                        <div onclick="entrarPastaDrive('${item.id}', '${item.nome}')" class="w-full flex flex-col items-center">
+                            <div class="w-16 h-16 bg-blue-50 text-ios-blue rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ph-folder text-4xl"></i></div>
+                            <span class="text-sm font-semibold text-center text-gray-800 line-clamp-2 w-full">${item.nome}</span>
+                        </div>
+                    </div>`;
+                } else {
+                    let icon = 'ph-file-text'; let color = 'text-gray-500'; let bg = 'bg-gray-100';
+                    if(item.nome.endsWith('.pdf')) { icon = 'ph-file-pdf'; color = 'text-red-500'; bg = 'bg-red-50'; }
+                    else if(item.nome.match(/\.(jpg|jpeg|png)$/i)) { icon = 'ph-image'; color = 'text-purple-500'; bg = 'bg-purple-50'; }
+                    else if(item.nome.match(/\.(xls|xlsx|csv)$/i)) { icon = 'ph-file-xls'; color = 'text-green-500'; bg = 'bg-green-50'; }
+                    
+                    grid.innerHTML += `
+                    <div class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200 group relative">
+                        <button onclick="deletarItemDrive('${item.id}')" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100"><i class="ph-bold ph-trash"></i></button>
+                        <div class="w-16 h-16 ${bg} ${color} rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ${icon} text-4xl"></i></div>
+                        <span class="text-sm font-semibold text-center text-gray-800 line-clamp-2 w-full" title="${item.nome}">${item.nome}</span>
+                        <span class="text-[10px] text-gray-400 mt-1">${item.size}</span>
+                    </div>`;
+                }
+            });
+
+            if(itens.length === 0 && pastaAtualDrive === 'root') {
+                grid.innerHTML += `<div class="col-span-full text-center text-gray-400 py-10 font-medium w-full">A nuvem está vazia. Comece criando uma pasta ou subindo arquivos.</div>`;
+            }
+        }
+
+        function entrarPastaDrive(id, nome) {
+            pastaAtualDrive = id;
+            historicoPastas.push({id, nome});
+            renderDrive();
+        }
+
+        function voltarDrive() {
+            if(historicoPastas.length > 1) {
+                historicoPastas.pop();
+                pastaAtualDrive = historicoPastas[historicoPastas.length - 1].id;
+                renderDrive();
+            }
+        }
+
+        function navegarDriveTo(index) {
+            historicoPastas = historicoPastas.slice(0, index + 1);
+            pastaAtualDrive = historicoPastas[historicoPastas.length - 1].id;
+            renderDrive();
+        }
+
+        function novaPastaDrive() {
+            const nome = prompt("Nome da nova pasta:");
+            if(nome) {
+                if(!dados.drive) dados.drive = [];
+                dados.drive.push({ id: 'd_' + Date.now(), tipo: 'pasta', nome, parentId: pastaAtualDrive });
+                salvar(); renderDrive();
+            }
+        }
+
+        function uploadArquivoDrive(input) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const sizeMB = (file.size / (1024*1024)).toFixed(2) + ' MB';
+                if(!dados.drive) dados.drive = [];
+                
+                // Timeout para simular o upload na tela
+                setTimeout(() => {
+                    dados.drive.push({ id: 'd_' + Date.now(), tipo: 'arquivo', nome: file.name, parentId: pastaAtualDrive, size: sizeMB });
+                    salvar(); renderDrive();
+                }, 400);
+            }
+        }
+
+        function deletarItemDrive(id) {
+            if(confirm("Deseja realmente apagar este item?")) {
+                dados.drive = dados.drive.filter(d => d.id !== id);
+                salvar(); renderDrive();
+            }
+        }
+
+        // ================= FUNÇÕES DE EMENDAS (QUE ESTAVAM FALTANDO) =================
+        function mudarVisaoEmenda(visao) {
+            visaoEmendaAtual = visao;
+            
+            // Alterna estilos do botão
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active', 'bg-white', 'shadow-sm'));
+            document.getElementById(`view-btn-${visao}`).classList.add('active', 'bg-white', 'shadow-sm');
+            
+            // Alterna containers
+            if(visao === 'mapa') {
+                document.getElementById('visao-mapa').style.display = 'grid';
+                document.getElementById('visao-relatorio').style.display = 'none';
+            } else {
+                document.getElementById('visao-mapa').style.display = 'none';
+                document.getElementById('visao-relatorio').style.display = 'block';
+            }
+            renderEmendas();
+        }
+
+        function mudarTipoEmenda(tipo) {
+            tipoEmendaAtual = tipo;
+            // Alterna estilos da tab
+            document.querySelectorAll('#view-emendas .tab-btn').forEach(btn => btn.classList.remove('active', 'bg-white', 'shadow-sm'));
+            document.getElementById(`tab-${tipo}`).classList.add('active', 'bg-white', 'shadow-sm');
+            renderEmendas();
+        }
+
 
         // ================= SAÚDE (NOVO MÓDULO) =================
         function renderSaude() {
@@ -1091,7 +1227,7 @@
             const notasPreview = document.getElementById('dash-notas-preview'); if(dados.notas.length > 0) notasPreview.innerText = dados.notas[0].texto; else notasPreview.innerText = "Nenhuma nota recente.";
         }
 
-        function renderAll() { renderDashboard(); renderEmendas(); renderPropostas(); renderLiderancas(); renderCalendario(); renderKanban(); renderNotas(); renderSaude(); }
+        function renderAll() { renderDashboard(); renderEmendas(); renderPropostas(); renderLiderancas(); renderCalendario(); renderKanban(); renderNotas(); renderSaude(); renderDrive(); }
     </script>
 </body>
 </html>
