@@ -11,6 +11,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -776,109 +778,157 @@
             if(tabId === 'saude') renderSaude();
             if(tabId === 'arquivos') renderDrive();
         }
+// ================= GOOGLE DRIVE API INTEGRATION =================
+let tokenClient;
+let driveAccessToken = null;
+let historicoPastasGoogle = [{ id: 'root', nome: 'Meu Drive' }];
+let pastaAtualGoogle = 'root';
 
-        // ================= ARQUIVOS (DRIVE / NUVEM) =================
-        function renderDrive() {
-            const grid = document.getElementById('drive-grid');
-            const breadcrumb = document.getElementById('drive-breadcrumb');
-            grid.innerHTML = '';
-            
-            breadcrumb.innerHTML = historicoPastas.map((p, index) => {
-                const isLast = index === historicoPastas.length - 1;
-                return `<span class="cursor-pointer hover:text-ios-blue ${isLast ? 'text-gray-900 font-bold' : ''}" onclick="navegarDriveTo(${index})">${p.nome}</span> ${!isLast ? '<i class="ph-bold ph-caret-right text-[10px] mx-1"></i>' : ''}`;
-            }).join('');
+// O Google exige que a inicialização ocorra após a página carregar
+window.addEventListener('load', () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: '355527948684-vh0kbko0v6o29h8c01s0kng9euun3d6i.apps.googleusercontent.com',
+        // O escopo 'drive' permite ler e enviar arquivos
+        scope: 'https://www.googleapis.com/auth/drive',
+        callback: (tokenResponse) => {
+            driveAccessToken = tokenResponse.access_token;
+            document.getElementById('btn-conectar-drive').style.display = 'none';
+            document.getElementById('btn-upload-drive').classList.remove('hidden');
+            document.getElementById('btn-upload-drive').classList.add('flex');
+            carregarGoogleDrive('root', 'Meu Drive');
+        }
+    });
+});
 
-            const itens = (dados.drive || []).filter(d => d.parentId === pastaAtualDrive);
-            
-            if(pastaAtualDrive !== 'root') {
-                grid.innerHTML += `
-                <div onclick="voltarDrive()" class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200">
-                    <div class="w-16 h-16 bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ph-arrow-u-up-left text-3xl"></i></div>
-                    <span class="text-sm font-semibold text-center text-gray-700">Voltar</span>
-                </div>`;
-            }
+function autenticarGoogleDrive() {
+    tokenClient.requestAccessToken();
+}
 
-            itens.forEach(item => {
-                if(item.tipo === 'pasta') {
+async function carregarGoogleDrive(folderId, folderName) {
+    if (!driveAccessToken) return autenticarGoogleDrive();
+
+    pastaAtualGoogle = folderId;
+    const grid = document.getElementById('drive-grid');
+    grid.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center py-10"><i class="ph-bold ph-spinner animate-spin text-4xl text-ios-blue mb-2"></i><p class="text-gray-500">Sincronizando com o Google Drive...</p></div>';
+
+    // Atualiza Caminho (Breadcrumb)
+    const breadcrumb = document.getElementById('drive-breadcrumb');
+    breadcrumb.innerHTML = historicoPastasGoogle.map((p, index) => {
+        const isLast = index === historicoPastasGoogle.length - 1;
+        return `<span class="cursor-pointer hover:text-ios-blue ${isLast ? 'text-gray-900 font-bold' : ''}" onclick="navegarGoogleDriveTo(${index})">${p.nome}</span> ${!isLast ? '<i class="ph-bold ph-caret-right text-[10px] mx-1"></i>' : ''}`;
+    }).join('');
+
+    try {
+        // Busca os arquivos diretamente da API do Drive
+        const response = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,name,mimeType,size,iconLink,webViewLink)&orderBy=folder,name`, {
+            headers: { 'Authorization': `Bearer ${driveAccessToken}` }
+        });
+        const data = await response.json();
+        grid.innerHTML = '';
+        
+        // Botão de Voltar
+        if(pastaAtualGoogle !== 'root') {
+            grid.innerHTML += `
+            <div onclick="voltarGoogleDrive()" class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200">
+                <div class="w-16 h-16 bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ph-arrow-u-up-left text-3xl"></i></div>
+                <span class="text-sm font-semibold text-center text-gray-700">Voltar</span>
+            </div>`;
+        }
+
+        if(data.files && data.files.length > 0) {
+            data.files.forEach(item => {
+                const isFolder = item.mimeType === 'application/vnd.google-apps.folder';
+                
+                if(isFolder) {
                     grid.innerHTML += `
-                    <div class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200 group relative">
-                        <button onclick="deletarItemDrive('${item.id}')" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100"><i class="ph-bold ph-trash"></i></button>
-                        <div onclick="entrarPastaDrive('${item.id}', '${item.nome}')" class="w-full flex flex-col items-center">
-                            <div class="w-16 h-16 bg-blue-50 text-ios-blue rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ph-folder text-4xl"></i></div>
-                            <span class="text-sm font-semibold text-center text-gray-800 line-clamp-2 w-full">${item.nome}</span>
-                        </div>
+                    <div onclick="entrarPastaGoogle('${item.id}', '${item.name}')" class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200 group">
+                        <div class="w-16 h-16 bg-blue-50 text-ios-blue rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ph-folder text-4xl"></i></div>
+                        <span class="text-sm font-semibold text-center text-gray-800 line-clamp-2 w-full" title="${item.name}">${item.name}</span>
                     </div>`;
                 } else {
                     let icon = 'ph-file-text'; let color = 'text-gray-500'; let bg = 'bg-gray-100';
-                    if(item.nome.endsWith('.pdf')) { icon = 'ph-file-pdf'; color = 'text-red-500'; bg = 'bg-red-50'; }
-                    else if(item.nome.match(/\.(jpg|jpeg|png)$/i)) { icon = 'ph-image'; color = 'text-purple-500'; bg = 'bg-purple-50'; }
-                    else if(item.nome.match(/\.(xls|xlsx|csv)$/i)) { icon = 'ph-file-xls'; color = 'text-green-500'; bg = 'bg-green-50'; }
+                    if(item.mimeType.includes('pdf')) { icon = 'ph-file-pdf'; color = 'text-red-500'; bg = 'bg-red-50'; }
+                    else if(item.mimeType.includes('image')) { icon = 'ph-image'; color = 'text-purple-500'; bg = 'bg-purple-50'; }
+                    else if(item.mimeType.includes('spreadsheet') || item.mimeType.includes('excel')) { icon = 'ph-file-xls'; color = 'text-green-500'; bg = 'bg-green-50'; }
                     
+                    let sizeMB = item.size ? (item.size / (1024*1024)).toFixed(2) + ' MB' : '';
+
                     grid.innerHTML += `
-                    <div class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200 group relative">
-                        <button onclick="deletarItemDrive('${item.id}')" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100"><i class="ph-bold ph-trash"></i></button>
+                    <a href="${item.webViewLink}" target="_blank" class="flex flex-col items-center p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200 group">
                         <div class="w-16 h-16 ${bg} ${color} rounded-2xl flex items-center justify-center mb-2"><i class="ph-fill ${icon} text-4xl"></i></div>
-                        <span class="text-sm font-semibold text-center text-gray-800 line-clamp-2 w-full" title="${item.nome}">${item.nome}</span>
-                        <span class="text-[10px] text-gray-400 mt-1">${item.size}</span>
-                    </div>`;
+                        <span class="text-sm font-semibold text-center text-gray-800 line-clamp-2 w-full" title="${item.name}">${item.name}</span>
+                        <span class="text-[10px] text-gray-400 mt-1">${sizeMB}</span>
+                    </a>`;
                 }
             });
+        } else {
+            grid.innerHTML += `<div class="col-span-full text-center text-gray-400 py-10 font-medium w-full">Esta pasta está vazia.</div>`;
+        }
+        
+    } catch (error) {
+        console.error(error);
+        grid.innerHTML = '<p class="col-span-full text-center text-red-500 font-bold py-10">Erro ao carregar. Conecte-se novamente.</p>';
+    }
+}
 
-            if(itens.length === 0 && pastaAtualDrive === 'root') {
-                grid.innerHTML += `<div class="col-span-full text-center text-gray-400 py-10 font-medium w-full">A nuvem está vazia. Comece criando uma pasta ou subindo arquivos.</div>`;
+async function uploadParaGoogleDrive(input) {
+    if (!driveAccessToken) return alert("Conecte-se ao Google Drive primeiro!");
+    if(input.files && input.files[0]) {
+        const file = input.files[0];
+        
+        // Prepara os metadados (nome e pasta de destino)
+        const metadata = {
+            name: file.name,
+            parents: [pastaAtualGoogle]
+        };
+
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+        form.append('file', file);
+
+        document.getElementById('drive-grid').innerHTML = '<div class="col-span-full flex flex-col items-center justify-center py-10"><i class="ph-bold ph-spinner animate-spin text-4xl text-ios-blue mb-2"></i><p class="text-gray-500">Fazendo upload para o Google Drive...</p></div>';
+
+        try {
+            const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${driveAccessToken}` },
+                body: form
+            });
+            const result = await response.json();
+            
+            if(result.id) {
+                input.value = ''; // Limpa o input
+                carregarGoogleDrive(pastaAtualGoogle, ''); // Recarrega a pasta atual
+            } else {
+                alert("Erro no upload do arquivo.");
             }
+        } catch (e) {
+            console.error("Erro no upload", e);
+            alert("Falha na comunicação com o servidor.");
+            carregarGoogleDrive(pastaAtualGoogle, '');
         }
+    }
+}
 
-        function entrarPastaDrive(id, nome) {
-            pastaAtualDrive = id;
-            historicoPastas.push({id, nome});
-            renderDrive();
-        }
+// Navegação de pastas
+function entrarPastaGoogle(id, nome) {
+    historicoPastasGoogle.push({id, nome});
+    carregarGoogleDrive(id, nome);
+}
 
-        function voltarDrive() {
-            if(historicoPastas.length > 1) {
-                historicoPastas.pop();
-                pastaAtualDrive = historicoPastas[historicoPastas.length - 1].id;
-                renderDrive();
-            }
-        }
+function voltarGoogleDrive() {
+    if(historicoPastasGoogle.length > 1) {
+        historicoPastasGoogle.pop();
+        const pastaAnterior = historicoPastasGoogle[historicoPastasGoogle.length - 1];
+        carregarGoogleDrive(pastaAnterior.id, pastaAnterior.nome);
+    }
+}
 
-        function navegarDriveTo(index) {
-            historicoPastas = historicoPastas.slice(0, index + 1);
-            pastaAtualDrive = historicoPastas[historicoPastas.length - 1].id;
-            renderDrive();
-        }
-
-        function novaPastaDrive() {
-            const nome = prompt("Nome da nova pasta:");
-            if(nome) {
-                if(!dados.drive) dados.drive = [];
-                dados.drive.push({ id: 'd_' + Date.now(), tipo: 'pasta', nome, parentId: pastaAtualDrive });
-                salvar(); renderDrive();
-            }
-        }
-
-        function uploadArquivoDrive(input) {
-            if(input.files && input.files[0]) {
-                const file = input.files[0];
-                const sizeMB = (file.size / (1024*1024)).toFixed(2) + ' MB';
-                if(!dados.drive) dados.drive = [];
-                
-                // Timeout para simular o upload na tela
-                setTimeout(() => {
-                    dados.drive.push({ id: 'd_' + Date.now(), tipo: 'arquivo', nome: file.name, parentId: pastaAtualDrive, size: sizeMB });
-                    salvar(); renderDrive();
-                }, 400);
-            }
-        }
-
-        function deletarItemDrive(id) {
-            if(confirm("Deseja realmente apagar este item?")) {
-                dados.drive = dados.drive.filter(d => d.id !== id);
-                salvar(); renderDrive();
-            }
-        }
-
+function navegarGoogleDriveTo(index) {
+    historicoPastasGoogle = historicoPastasGoogle.slice(0, index + 1);
+    const pastaDestino = historicoPastasGoogle[historicoPastasGoogle.length - 1];
+    carregarGoogleDrive(pastaDestino.id, pastaDestino.nome);
+}
         // ================= FUNÇÕES DE EMENDAS (QUE ESTAVAM FALTANDO) =================
         function mudarVisaoEmenda(visao) {
             visaoEmendaAtual = visao;
@@ -1227,7 +1277,7 @@
             const notasPreview = document.getElementById('dash-notas-preview'); if(dados.notas.length > 0) notasPreview.innerText = dados.notas[0].texto; else notasPreview.innerText = "Nenhuma nota recente.";
         }
 
-        function renderAll() { renderDashboard(); renderEmendas(); renderPropostas(); renderLiderancas(); renderCalendario(); renderKanban(); renderNotas(); renderSaude(); renderDrive(); }
+        function renderAll() { renderDashboard(); renderEmendas(); renderPropostas(); renderLiderancas(); renderCalendario(); renderKanban(); renderNotas(); renderSaude(); }
     </script>
 </body>
 </html>
